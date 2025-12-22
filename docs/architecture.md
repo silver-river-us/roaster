@@ -14,6 +14,7 @@ Roaster is built as a classic Ruby/Sinatra web application with a focus on priva
 - **Server**: Puma
 - **Session Management**: Rack::Session::Cookie
 - **Authentication**: bcrypt for password hashing, API key authentication
+- **Rate Limiting**: Rack::Attack with in-memory cache
 - **Testing**: MiniTest with SimpleCov (100% coverage requirement)
 - **Deployment**: Fly.io with LiteFS for multi-region distribution
 
@@ -243,6 +244,14 @@ Stores API keys for programmatic access.
 - 24-hour expiration
 - CSRF protection via Rack::Protection
 
+### Rate Limiting
+- IP-based throttling via Rack::Attack
+- General requests: 100 requests/minute per IP
+- API verification: 100 requests/minute per IP
+- Login attempts: 5 requests/minute per IP
+- CSV uploads: 10 requests/hour per IP
+- 429 status code with Retry-After header for throttled requests
+
 ## Privacy Guarantees
 
 1. **No Plaintext Storage**: Email addresses are hashed immediately and never stored in plaintext
@@ -320,12 +329,12 @@ Stores API keys for programmatic access.
 
 Potential areas for expansion:
 
-1. **Rate Limiting**: Add per-IP rate limiting for verification endpoints
-2. **Analytics**: Track verification attempts and success rates
-3. **Webhooks**: Notify organizations of verification events
-4. **Multi-Database Support**: PostgreSQL option for larger deployments
-5. **Audit Logging**: Track all administrative actions
-6. **Backup System**: Automated LiteFS backups to S3
+1. **Analytics**: Track verification attempts and success rates
+2. **Webhooks**: Notify organizations of verification events
+3. **Multi-Database Support**: PostgreSQL option for larger deployments
+4. **Audit Logging**: Track all administrative actions
+5. **Backup System**: Automated LiteFS backups to S3
+6. **Redis Cache**: Replace in-memory cache with Redis for multi-server rate limiting
 
 ## License
 

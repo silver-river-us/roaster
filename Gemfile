@@ -1,9 +1,11 @@
 source 'https://rubygems.org'
 
+gem 'activesupport'
 gem 'bcrypt'
 gem 'csv'
 gem 'dotenv'
 gem 'puma'
+gem 'rack-attack'
 gem 'rack-session'
 gem 'rackup'
 gem 'rake'
