@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+echo "Setting up test database..."
+bundle exec rake db:migrate_test
+
+echo ""
+echo "Running tests..."
+RUBYOPT="-W0" bundle exec rake test

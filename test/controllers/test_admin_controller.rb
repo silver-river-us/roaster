@@ -1,0 +1,106 @@
+require_relative '../test_helper'
+require_relative '../../controllers/admin_controller'
+
+class TestAdminController < Minitest::Test
+  def test_index_returns_stats
+    # Add some test data
+    VerifiedEmail.create(email_hash: 'hash1', organization_name: 'Org1')
+    VerifiedEmail.create(email_hash: 'hash2', organization_name: 'Org1')
+    VerifiedEmail.create(email_hash: 'hash3', organization_name: 'Org2')
+
+    response = AdminController.index({})
+
+    assert_equal :admin, response[:template]
+    assert_equal 3, response[:locals][:stats][:total_emails]
+    assert_equal 2, response[:locals][:stats][:organizations]
+    assert_nil response[:locals][:success]
+    assert_nil response[:locals][:error]
+  end
+
+  def test_download_example_returns_csv
+    response = AdminController.download_example({})
+
+    assert_equal 'text/csv', response[:content_type]
+    assert_equal 'example_emails.csv', response[:attachment]
+    assert response[:body].is_a?(String)
+  end
+
+  def test_upload_without_file
+    params = {}
+    response = AdminController.upload(params, {})
+
+    assert_equal :admin, response[:template]
+    assert_equal 'Please select a CSV file', response[:locals][:error]
+    assert_nil response[:locals][:success]
+    assert response[:locals][:stats].is_a?(Hash)
+  end
+
+  def test_upload_with_valid_csv
+    csv_path = '/tmp/upload_test.csv'
+    File.write(csv_path, "email\ntest1@example.com\ntest2@example.com\n")
+
+    tempfile = Minitest::Mock.new
+    tempfile.expect(:path, csv_path)
+
+    params = {
+      csv_file: { tempfile: tempfile },
+      organization_name: 'Test Org'
+    }
+
+    response = AdminController.upload(params, {})
+
+    assert_equal :admin, response[:template]
+    assert_match(/Successfully imported 2 emails/, response[:locals][:success])
+    assert_nil response[:locals][:error]
+    assert_equal 2, VerifiedEmail.count
+
+    File.delete(csv_path)
+    tempfile.verify
+  end
+
+  def test_upload_with_duplicates
+    csv_path = '/tmp/upload_test.csv'
+    File.write(csv_path, "email\ntest@example.com\ntest@example.com\n")
+
+    tempfile = Minitest::Mock.new
+    tempfile.expect(:path, csv_path)
+
+    params = {
+      csv_file: { tempfile: tempfile },
+      organization_name: 'Test Org'
+    }
+
+    response = AdminController.upload(params, {})
+
+    assert_match(/1 duplicates skipped/, response[:locals][:success])
+    assert_equal 1, VerifiedEmail.count
+
+    File.delete(csv_path)
+    tempfile.verify
+  end
+
+  def test_upload_with_invalid_csv
+    csv_path = '/tmp/invalid.csv'
+    File.write(csv_path, "wrong_header\ntest@example.com\n")
+
+    tempfile = Minitest::Mock.new
+    tempfile.expect(:path, csv_path)
+
+    params = {
+      csv_file: { tempfile: tempfile }
+    }
+
+    response = AdminController.upload(params, {})
+
+    assert_equal :admin, response[:template]
+    # The CSV will import but with 0 emails since there's no "email" column
+    if response[:locals][:error]
+      assert_match(/Error importing CSV/, response[:locals][:error])
+    else
+      assert_match(/Successfully imported 0 emails/, response[:locals][:success])
+    end
+
+    File.delete(csv_path)
+    tempfile.verify
+  end
+end
