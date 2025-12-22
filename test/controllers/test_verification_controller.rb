@@ -9,10 +9,10 @@ class TestVerificationController < Minitest::Test
     @api_key = result[:raw_key]
   end
 
-  def test_index_returns_template_and_locals
-    response = VerificationController.index({})
+  def test_verify_page_returns_template_and_locals
+    response = VerificationController.verify_page({})
 
-    assert_equal :index, response[:template]
+    assert_equal :verify, response[:template]
     assert response[:locals].is_a?(Hash)
     assert_nil response[:locals][:success]
     assert_nil response[:locals][:error]
@@ -20,7 +20,7 @@ class TestVerificationController < Minitest::Test
   end
 
   def test_verify_page_returns_template_and_accepts_params
-    response = VerificationController.verify_page({ api_key: @api_key, email: 'test@example.com' }, {})
+    response = VerificationController.verify_page({ api_key: @api_key, email: 'test@example.com' })
 
     assert_equal :verify, response[:template]
     assert_equal @api_key, response[:locals][:api_key]
@@ -28,7 +28,7 @@ class TestVerificationController < Minitest::Test
   end
 
   def test_verify_with_empty_email
-    response = VerificationController.verify({ api_key: @api_key, email: '', organization_username: 'testorg' }, {})
+    response = VerificationController.verify({ api_key: @api_key, email: '', organization_username: 'testorg' })
 
     assert_equal :verify, response[:template]
     assert_equal 'Please enter API key, organization username, and email address', response[:locals][:error]
@@ -36,14 +36,14 @@ class TestVerificationController < Minitest::Test
   end
 
   def test_verify_with_nil_email
-    response = VerificationController.verify({ api_key: @api_key, organization_username: 'testorg' }, {})
+    response = VerificationController.verify({ api_key: @api_key, organization_username: 'testorg' })
 
     assert_equal :verify, response[:template]
     assert_equal 'Please enter API key, organization username, and email address', response[:locals][:error]
   end
 
   def test_verify_with_missing_api_key
-    response = VerificationController.verify({ email: 'test@example.com', organization_username: 'testorg' }, {})
+    response = VerificationController.verify({ email: 'test@example.com', organization_username: 'testorg' })
 
     assert_equal :verify, response[:template]
     assert_equal 'Please enter API key, organization username, and email address', response[:locals][:error]
@@ -53,7 +53,7 @@ class TestVerificationController < Minitest::Test
     Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
     response = VerificationController.verify(
-      { api_key: 'invalid_key', email: 'test@example.com', organization_username: 'testorg' }, {}
+      { api_key: 'invalid_key', email: 'test@example.com', organization_username: 'testorg' }
     )
 
     assert_equal :verify, response[:template]
@@ -71,7 +71,7 @@ class TestVerificationController < Minitest::Test
       organization_name: 'Test Org'
     )
 
-    response = VerificationController.verify({ api_key: @api_key, email: email, organization_username: 'testorg' }, {})
+    response = VerificationController.verify({ api_key: @api_key, email: email, organization_username: 'testorg' })
 
     assert_equal :verify, response[:template]
     assert_equal true, response[:locals][:success]
@@ -86,7 +86,7 @@ class TestVerificationController < Minitest::Test
     Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
     response = VerificationController.verify(
-      { api_key: @api_key, email: 'notfound@example.com', organization_username: 'testorg' }, {}
+      { api_key: @api_key, email: 'notfound@example.com', organization_username: 'testorg' }
     )
 
     assert_equal :verify, response[:template]
@@ -105,7 +105,7 @@ class TestVerificationController < Minitest::Test
     )
 
     response = VerificationController.verify(
-      { api_key: "  #{@api_key}  ", email: "  #{email}  ", organization_username: '  testorg  ' }, {}
+      { api_key: "  #{@api_key}  ", email: "  #{email}  ", organization_username: '  testorg  ' }
     )
 
     assert_equal true, response[:locals][:success]

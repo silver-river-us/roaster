@@ -37,11 +37,11 @@ end
 
 # Verify Page
 get '/verify' do
-  render_controller VerificationController.verify_page(params, {})
+  render_controller VerificationController.verify_page(params)
 end
 
 post '/verify' do
-  render_controller VerificationController.verify(params, {})
+  render_controller VerificationController.verify(params)
 end
 
 # API v1 Verification Endpoint
@@ -114,37 +114,37 @@ end
 # Super Admin (Session-based auth)
 get '/super-admin' do
   require_super_admin
-  render_controller SuperAdminController.index({})
+  render_controller SuperAdminController.index
 end
 
 post '/super-admin/organizations' do
   require_super_admin
-  render_controller SuperAdminController.create_organization(params, {})
+  render_controller SuperAdminController.create_organization(params)
 end
 
 get '/super-admin/organizations/:id/edit' do
   require_super_admin
-  render_controller SuperAdminController.edit(params, {})
+  render_controller SuperAdminController.edit(params)
 end
 
 post '/super-admin/organizations/:id/update' do
   require_super_admin
-  render_controller SuperAdminController.update_organization(params, {})
+  render_controller SuperAdminController.update_organization(params)
 end
 
 post '/super-admin/organizations/:id/delete' do
   require_super_admin
-  render_controller SuperAdminController.delete_organization(params, {})
+  render_controller SuperAdminController.delete_organization(params)
 end
 
 post '/super-admin/api-keys' do
   require_super_admin
-  render_controller SuperAdminController.create_api_key(params, {})
+  render_controller SuperAdminController.create_api_key(params)
 end
 
 post '/super-admin/api-keys/:id/delete' do
   require_super_admin
-  render_controller SuperAdminController.delete_api_key(params, {})
+  render_controller SuperAdminController.delete_api_key(params)
 end
 
 # Organization Admin Login
@@ -171,15 +171,15 @@ end
 # Organization Admin (Session-based auth)
 get '/admin' do
   current_org = require_organization
-  render_controller AdminController.index(current_org, {})
+  render_controller AdminController.index(current_org)
 end
 
 get '/admin/download-example' do
   require_organization
-  render_controller AdminController.download_example({})
+  render_controller AdminController.download_example
 end
 
 post '/admin/upload' do
   current_org = require_organization
-  render_controller AdminController.upload(current_org, params, {})
+  render_controller AdminController.upload(current_org, params)
 end

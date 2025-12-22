@@ -1,177 +1,183 @@
 # rubocop:disable Metrics/ClassLength
 class SuperAdminController
-  def self.index(response)
-    response[:organizations] = Organization.order(:name).all
-    response[:api_keys] = ApiKey.order(Sequel.desc(:created_at)).all
-    response[:title] = 'Roaster - Super Admin'
-    response[:show_super_admin_nav] = true
-    { template: :super_admin, locals: response }
+  def self.index
+    reset_state
+    @organizations = Organization.order(:name).all
+    @api_keys = ApiKey.order(Sequel.desc(:created_at)).all
+    @title = 'Roaster - Super Admin'
+    @show_super_admin_nav = true
+
+    { template: :super_admin, locals: build_locals }
   end
 
-  def self.edit(params, response)
-    org_id = params[:id]
-    org = Organization[org_id]
+  def self.edit(params)
+    reset_state
+    org = Organization[params[:id]]
 
     if org
-      response[:organization] = org
-      response[:title] = 'Edit Organization - Roaster'
-      response[:show_super_admin_nav] = true
-      { template: :edit_organization, locals: response }
+      @organization = org
+      @title = 'Edit Organization - Roaster'
+      @show_super_admin_nav = true
+      { template: :edit_organization, locals: build_locals }
     else
-      response[:error] = 'Organization not found'
-      response[:organizations] = Organization.order(:name).all
-      response[:title] = 'Roaster - Super Admin'
-      response[:show_super_admin_nav] = true
-      { template: :super_admin, locals: response }
+      @error = 'Organization not found'
+      render_super_admin
     end
   end
 
-  def self.create_organization(params, response)
+  def self.create_organization(params)
+    reset_state
     name = params[:name]&.strip
     username = params[:username]&.strip
     password = params[:password]&.strip
 
-    validation_error = validate_organization_params(name, username, password)
-    if validation_error
-      response[:error] = validation_error
+    if (validation_error = validate_org_params(name, username, password))
+      @error = validation_error
     else
-      create_org_record(name, username, password, response)
+      create_org(name, username, password)
     end
 
-    render_super_admin_response(response)
+    render_super_admin
   end
 
-  def self.validate_organization_params(name, username, password)
+  def self.update_organization(params)
+    reset_state
+    org = Organization[params[:id]]
+
+    unless org
+      @error = 'Organization not found'
+      return render_super_admin
+    end
+
+    name = params[:name]&.strip
+    username = params[:username]&.strip
+    password = params[:password]&.strip
+
+    if (validation_error = validate_org_update_params(name, username))
+      @error = validation_error
+    else
+      update_org(org, name, username, password)
+    end
+
+    render_super_admin
+  end
+
+  def self.delete_organization(params)
+    reset_state
+    org = Organization[params[:id]]
+
+    if org
+      begin
+        org.delete
+        @success = "Organization '#{org.name}' deleted successfully"
+      rescue StandardError => e
+        @error = "Error deleting organization: #{e.message}"
+      end
+    else
+      @error = 'Organization not found'
+    end
+
+    render_super_admin
+  end
+
+  def self.create_api_key(params)
+    reset_state
+    name = params[:name]&.strip
+
+    if name.nil? || name.empty?
+      @error = 'API key name is required'
+    else
+      result = ApiKey.generate(name)
+      @success = "API key '#{name}' created successfully"
+      @new_api_key = result[:raw_key]
+    end
+
+    render_super_admin
+  end
+
+  def self.delete_api_key(params)
+    reset_state
+    api_key = ApiKey[params[:id]]
+
+    if api_key
+      api_key.delete
+      @success = "API key '#{api_key.name}' deleted successfully"
+    else
+      @error = 'API key not found'
+    end
+
+    render_super_admin
+  end
+
+  private_class_method def self.validate_org_params(name, username, password)
     return 'Organization name is required' if name.nil? || name.empty?
     return 'Username is required' if username.nil? || username.empty?
     return 'Password is required' if password.nil? || password.empty?
 
     nil
   end
-  private_class_method :validate_organization_params
 
-  def self.create_org_record(name, username, password, response)
-    org = Organization.new(name: name, username: username)
-    org.password = password
-    org.save
-    response[:success] = "Organization '#{name}' created successfully"
-  rescue Sequel::UniqueConstraintViolation
-    response[:error] = 'Username or organization name already exists'
-  rescue StandardError => e
-    response[:error] = "Error creating organization: #{e.message}"
-  end
-  private_class_method :create_org_record
-
-  def self.update_organization(params, response)
-    org_id = params[:id]
-    name = params[:name]&.strip
-    username = params[:username]&.strip
-    password = params[:password]&.strip
-
-    org = Organization[org_id]
-    unless org
-      response[:error] = 'Organization not found'
-      return render_super_admin_response(response)
-    end
-
-    validation_error = validate_update_params(name, username)
-    if validation_error
-      response[:error] = validation_error
-    else
-      update_org_record(org, name, username, password, response)
-    end
-
-    render_super_admin_response(response)
-  end
-
-  def self.validate_update_params(name, username)
+  private_class_method def self.validate_org_update_params(name, username)
     return 'Organization name is required' if name.nil? || name.empty?
     return 'Username is required' if username.nil? || username.empty?
 
     nil
   end
-  private_class_method :validate_update_params
 
-  def self.update_org_record(org, name, username, password, response)
+  private_class_method def self.create_org(name, username, password)
+    org = Organization.new(name: name, username: username)
+    org.password = password
+    org.save
+    @success = "Organization '#{name}' created successfully"
+  rescue Sequel::UniqueConstraintViolation
+    @error = 'Username or organization name already exists'
+  rescue StandardError => e
+    @error = "Error creating organization: #{e.message}"
+  end
+
+  private_class_method def self.update_org(org, name, username, password)
     org.name = name
     org.username = username
     org.password = password if password && !password.empty?
     org.save
-    response[:success] = "Organization '#{name}' updated successfully"
+    @success = "Organization '#{name}' updated successfully"
   rescue Sequel::UniqueConstraintViolation
-    response[:error] = 'Username or organization name already exists'
+    @error = 'Username or organization name already exists'
   rescue StandardError => e
-    response[:error] = "Error updating organization: #{e.message}"
-  end
-  private_class_method :update_org_record
-
-  def self.delete_organization(params, response)
-    org_id = params[:id]
-
-    begin
-      org = Organization[org_id]
-      if org
-        org.delete
-        response[:success] = "Organization '#{org.name}' deleted successfully"
-      else
-        response[:error] = 'Organization not found'
-      end
-    rescue StandardError => e
-      response[:error] = "Error deleting organization: #{e.message}"
-    end
-
-    render_super_admin_response(response)
+    @error = "Error updating organization: #{e.message}"
   end
 
-  def self.stats
+  private_class_method def self.render_super_admin
+    @organizations = Organization.order(:name).all
+    @api_keys = ApiKey.order(Sequel.desc(:created_at)).all
+    @title = 'Roaster - Super Admin'
+    @show_super_admin_nav = true
+
+    { template: :super_admin, locals: build_locals }
+  end
+
+  private_class_method def self.reset_state
+    @organizations = nil
+    @api_keys = nil
+    @organization = nil
+    @success = nil
+    @error = nil
+    @new_api_key = nil
+    @title = nil
+    @show_super_admin_nav = nil
+  end
+
+  private_class_method def self.build_locals
     {
-      total_emails: VerifiedEmail.count,
-      total_organizations: Organization.count,
-      organizations_breakdown: VerifiedEmail
-        .select(:organization_name)
-        .select_append { count(Sequel.lit('*')).as(:email_count) }
-        .where(Sequel.~(organization_name: nil))
-        .group(:organization_name)
-        .order(Sequel.desc(:email_count))
-        .all
+      organizations: @organizations,
+      api_keys: @api_keys,
+      organization: @organization,
+      success: @success,
+      error: @error,
+      new_api_key: @new_api_key,
+      title: @title,
+      show_super_admin_nav: @show_super_admin_nav
     }
   end
-
-  def self.create_api_key(params, response)
-    name = params[:name]&.strip
-
-    if name.nil? || name.empty?
-      response[:error] = 'API key name is required'
-    else
-      result = ApiKey.generate(name)
-      response[:success] = "API key '#{name}' created successfully"
-      response[:new_api_key] = result[:raw_key]
-    end
-
-    render_super_admin_response(response)
-  end
-
-  def self.delete_api_key(params, response)
-    api_key_id = params[:id]
-
-    api_key = ApiKey[api_key_id]
-    if api_key
-      api_key.delete
-      response[:success] = "API key '#{api_key.name}' deleted successfully"
-    else
-      response[:error] = 'API key not found'
-    end
-
-    render_super_admin_response(response)
-  end
-
-  def self.render_super_admin_response(response)
-    response[:organizations] = Organization.order(:name).all
-    response[:api_keys] = ApiKey.order(Sequel.desc(:created_at)).all
-    response[:title] = 'Roaster - Super Admin'
-    response[:show_super_admin_nav] = true
-    { template: :super_admin, locals: response }
-  end
-  private_class_method :render_super_admin_response
 end
 # rubocop:enable Metrics/ClassLength

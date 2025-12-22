@@ -12,7 +12,7 @@ class TestAdminController < Minitest::Test
     VerifiedEmail.create(email_hash: 'hash2', organization_name: 'Test Org')
     VerifiedEmail.create(email_hash: 'hash3', organization_name: 'Other Org')
 
-    response = AdminController.index(org, {})
+    response = AdminController.index(org)
 
     assert_equal :admin, response[:template]
     assert_equal 2, response[:locals][:stats][:total_emails]
@@ -22,7 +22,7 @@ class TestAdminController < Minitest::Test
   end
 
   def test_download_example_returns_csv
-    response = AdminController.download_example({})
+    response = AdminController.download_example
 
     assert_equal 'text/csv', response[:content_type]
     assert_equal 'example_emails.csv', response[:attachment]
@@ -34,7 +34,7 @@ class TestAdminController < Minitest::Test
     org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
     params = {}
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_equal :admin, response[:template]
     assert_equal 'Please select a CSV file', response[:locals][:error]
@@ -56,7 +56,7 @@ class TestAdminController < Minitest::Test
       csv_file: { tempfile: tempfile }
     }
 
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_equal :admin, response[:template]
     assert_match(/Successfully imported 2 emails/, response[:locals][:success])
@@ -81,7 +81,7 @@ class TestAdminController < Minitest::Test
       csv_file: { tempfile: tempfile }
     }
 
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_match(/1 duplicates skipped/, response[:locals][:success])
     assert_equal 1, VerifiedEmail.count
@@ -104,7 +104,7 @@ class TestAdminController < Minitest::Test
       csv_file: { tempfile: tempfile }
     }
 
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_equal :admin, response[:template]
     # The CSV will import but with 0 emails since there's no "email" column
@@ -137,7 +137,7 @@ class TestAdminController < Minitest::Test
       overwrite: 'true'
     }
 
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_match(/Deleted 2 existing emails/, response[:locals][:success])
     assert_match(/Successfully imported 2 emails/, response[:locals][:success])
@@ -158,7 +158,7 @@ class TestAdminController < Minitest::Test
       csv_file: { tempfile: tempfile }
     }
 
-    response = AdminController.upload(org, params, {})
+    response = AdminController.upload(org, params)
 
     assert_match(/Error importing CSV/, response[:locals][:error])
     assert_nil response[:locals][:success]

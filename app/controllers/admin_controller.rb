@@ -1,81 +1,101 @@
 class AdminController
-  def self.index(current_organization, response)
-    response[:stats] = stats(current_organization)
-    response[:organization] = current_organization
-    response[:success] ||= nil
-    response[:error] ||= nil
-    response[:title] = 'Roaster - Admin'
-    response[:show_admin_nav] = true
-    response[:logout_path] = '/admin/logout'
-    { template: :admin, locals: response }
+  def self.index(current_organization)
+    reset_state
+    @organization = current_organization
+    @stats = stats_for(current_organization)
+    @title = 'Roaster - Admin'
+    @show_admin_nav = true
+    @logout_path = '/admin/logout'
+
+    { template: :admin, locals: build_locals }
   end
 
-  def self.download_example(response)
-    response[:content_type] = 'text/csv'
-    response[:attachment] = 'example_emails.csv'
-    response[:body] = File.read('public/example_emails.csv')
-    response
+  def self.download_example
+    {
+      content_type: 'text/csv',
+      attachment: 'example_emails.csv',
+      body: File.read('public/example_emails.csv')
+    }
   end
 
-  def self.upload(current_organization, params, response)
-    # Validate file upload
-    unless params[:csv_file] && params[:csv_file][:tempfile]
-      response[:error] = 'Please select a CSV file'
-      response[:success] = nil
-      return render_admin_response(current_organization, response)
+  def self.upload(current_organization, params)
+    reset_state
+    @organization = current_organization
+
+    unless params[:csv_file]&.[](:tempfile)
+      @error = 'Please select a CSV file'
+      return render_admin(current_organization)
     end
 
+    handle_csv_upload(current_organization, params)
+    render_admin(current_organization)
+  end
+
+  private_class_method def self.handle_csv_upload(org, params)
     csv_path = params[:csv_file][:tempfile].path
     overwrite = params[:overwrite] == 'true'
 
-    process_csv_upload(current_organization, csv_path, overwrite, response)
-    render_admin_response(current_organization, response)
-  end
+    deleted_count = delete_existing_emails(org) if overwrite
+    result = VerifiedEmail.import_from_csv(csv_path, org.name)
 
-  def self.process_csv_upload(current_organization, csv_path, overwrite, response)
-    deleted_count = handle_overwrite(current_organization, overwrite)
-    result = VerifiedEmail.import_from_csv(csv_path, current_organization.name)
-
-    response[:success] = build_success_message(result, overwrite, deleted_count)
-    response[:error] = nil
+    @success = build_success_message(result, overwrite, deleted_count)
   rescue StandardError => e
-    response[:error] = "Error importing CSV: #{e.message}"
-    response[:success] = nil
+    @error = "Error importing CSV: #{e.message}"
   end
-  private_class_method :process_csv_upload
 
-  def self.handle_overwrite(current_organization, overwrite)
-    return nil unless overwrite
-
-    VerifiedEmail.where(organization_name: current_organization.name).delete
+  private_class_method def self.delete_existing_emails(org)
+    VerifiedEmail.where(organization_name: org.name).delete
   end
-  private_class_method :handle_overwrite
 
-  def self.build_success_message(result, overwrite, deleted_count)
+  private_class_method def self.build_success_message(result, overwrite, deleted_count)
     message = "Successfully imported #{result[:imported]} emails"
     message = "Deleted #{deleted_count} existing emails. #{message}" if overwrite && deleted_count
     message += " (#{result[:duplicates]} duplicates skipped)" if result[:duplicates].positive?
     message
   end
-  private_class_method :build_success_message
 
-  def self.render_admin_response(current_organization, response)
-    response[:stats] = stats(current_organization)
-    response[:organization] = current_organization
-    { template: :admin, locals: response }
+  private_class_method def self.render_admin(org)
+    @stats = stats_for(org)
+    @organization = org
+    @title = 'Roaster - Admin'
+    @show_admin_nav = true
+    @logout_path = '/admin/logout'
+
+    { template: :admin, locals: build_locals }
   end
-  private_class_method :render_admin_response
 
-  def self.stats(current_organization)
-    last_upload = VerifiedEmail.where(organization_name: current_organization.name)
-                               .order(Sequel.desc(:created_at))
-                               .first
+  private_class_method def self.stats_for(org)
+    last_upload = VerifiedEmail
+                  .where(organization_name: org.name)
+                  .order(Sequel.desc(:created_at))
+                  .first
 
     {
-      total_emails: VerifiedEmail.where(organization_name: current_organization.name).count,
-      organization_name: current_organization.name,
+      total_emails: VerifiedEmail.where(organization_name: org.name).count,
+      organization_name: org.name,
       last_upload_at: last_upload&.created_at
     }
   end
-  private_class_method :stats
+
+  private_class_method def self.reset_state
+    @stats = nil
+    @organization = nil
+    @success = nil
+    @error = nil
+    @title = nil
+    @show_admin_nav = nil
+    @logout_path = nil
+  end
+
+  private_class_method def self.build_locals
+    {
+      stats: @stats,
+      organization: @organization,
+      success: @success,
+      error: @error,
+      title: @title,
+      show_admin_nav: @show_admin_nav,
+      logout_path: @logout_path
+    }
+  end
 end
