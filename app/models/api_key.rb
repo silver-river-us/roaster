@@ -29,10 +29,8 @@ class ApiKey < Sequel::Model
     key_hash = Digest::SHA256.hexdigest(raw_key)
     api_key = first(key_hash: key_hash)
 
-    if api_key
-      # Update last_used_at timestamp
-      api_key.update(last_used_at: Time.now)
-    end
+    # Update last_used_at timestamp
+    api_key&.update(last_used_at: Time.now)
 
     api_key
   end

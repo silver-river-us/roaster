@@ -175,7 +175,7 @@ class TestAuthFlows < Minitest::Test
 
   def test_admin_with_invalid_organization_id_redirects
     # Set a session with an organization_id that doesn't exist
-    get '/admin', {}, 'rack.session' => { organization_id: 99999 }
+    get '/admin', {}, 'rack.session' => { organization_id: 99_999 }
 
     assert last_response.redirect?
     follow_redirect!

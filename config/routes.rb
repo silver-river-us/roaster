@@ -58,7 +58,11 @@ post '/api/v1/verify' do
   # Get email and organization_username from request body
   body_content = request.body.read
   request.body.rewind if request.body.respond_to?(:rewind)
-  body = JSON.parse(body_content) rescue {}
+  body = begin
+    JSON.parse(body_content)
+  rescue StandardError
+    {}
+  end
   email = body['email']
   organization_username = body['organization_username']
 

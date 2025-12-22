@@ -12,6 +12,7 @@ Sinatra::Application.set :root, File.expand_path('../..', __dir__)
 
 require_relative '../../config/routes'
 
+# rubocop:disable Metrics/ClassLength
 class TestRoutes < Minitest::Test
   include Rack::Test::Methods
 
@@ -163,3 +164,4 @@ class TestRoutes < Minitest::Test
     assert last_response.redirect?
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -52,7 +52,9 @@ class TestVerificationController < Minitest::Test
   def test_verify_with_invalid_api_key
     Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
-    response = VerificationController.verify({ api_key: 'invalid_key', email: 'test@example.com', organization_username: 'testorg' }, {})
+    response = VerificationController.verify(
+      { api_key: 'invalid_key', email: 'test@example.com', organization_username: 'testorg' }, {}
+    )
 
     assert_equal :verify, response[:template]
     assert_equal 'Email not verified', response[:locals][:error]
@@ -83,7 +85,9 @@ class TestVerificationController < Minitest::Test
     # Create organization
     Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
-    response = VerificationController.verify({ api_key: @api_key, email: 'notfound@example.com', organization_username: 'testorg' }, {})
+    response = VerificationController.verify(
+      { api_key: @api_key, email: 'notfound@example.com', organization_username: 'testorg' }, {}
+    )
 
     assert_equal :verify, response[:template]
     assert_equal 'Email not verified', response[:locals][:error]
@@ -100,7 +104,9 @@ class TestVerificationController < Minitest::Test
       organization_name: 'Test Org'
     )
 
-    response = VerificationController.verify({ api_key: "  #{@api_key}  ", email: "  #{email}  ", organization_username: '  testorg  ' }, {})
+    response = VerificationController.verify(
+      { api_key: "  #{@api_key}  ", email: "  #{email}  ", organization_username: '  testorg  ' }, {}
+    )
 
     assert_equal true, response[:locals][:success]
     assert_equal email, response[:locals][:email]

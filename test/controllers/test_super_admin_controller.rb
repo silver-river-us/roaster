@@ -182,7 +182,7 @@ class TestSuperAdminController < Minitest::Test
   end
 
   def test_update_organization_with_duplicate_constraint
-    org1 = Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
+    Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
     org2 = Organization.create_with_password(name: 'Org 2', username: 'org2', password: 'pass')
 
     params = { id: org2.id, name: 'Org 1', username: 'org2', password: '' }
@@ -212,14 +212,15 @@ class TestSuperAdminController < Minitest::Test
     params = { name: 'Test Org', username: 'testorg', password: 'password123' }
 
     # Stub the Organization model to raise an error during save
-    Organization.stub :new, ->(*_args) do
+    Organization.stub :new, lambda { |*_args|
       org = Object.new
       def org.password=(_val); end
+
       def org.save
         raise StandardError, 'Simulated database error'
       end
       org
-    end do
+    } do
       response = SuperAdminController.create_organization(params, {})
       assert_match(/Error creating organization/, response[:locals][:error])
       assert_match(/Simulated database error/, response[:locals][:error])
@@ -231,16 +232,17 @@ class TestSuperAdminController < Minitest::Test
     params = { id: org.id, name: 'Updated Name', username: 'updateduser', password: '' }
 
     # Stub Organization[] to return a mock that fails on save
-    Organization.stub :[], ->(_id) do
+    Organization.stub :[], lambda { |_id|
       mock_org = Object.new
       def mock_org.name=(_val); end
       def mock_org.username=(_val); end
       def mock_org.password=(_val); end
+
       def mock_org.save
         raise StandardError, 'Simulated update error'
       end
       mock_org
-    end do
+    } do
       response = SuperAdminController.update_organization(params, {})
       assert_match(/Error updating organization/, response[:locals][:error])
       assert_match(/Simulated update error/, response[:locals][:error])
@@ -251,13 +253,13 @@ class TestSuperAdminController < Minitest::Test
     org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
     # Stub Organization[] to return a mock that fails on delete
-    Organization.stub :[], ->(_id) do
+    Organization.stub :[], lambda { |_id|
       mock_org = Object.new
       def mock_org.delete
         raise StandardError, 'Simulated delete error'
       end
       mock_org
-    end do
+    } do
       response = SuperAdminController.delete_organization({ id: org.id }, {})
       assert_match(/Error deleting organization/, response[:locals][:error])
       assert_match(/Simulated delete error/, response[:locals][:error])

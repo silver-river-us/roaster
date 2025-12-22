@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 require_relative '../../app/controllers/admin_controller'
 
+# rubocop:disable Metrics/ClassLength
 class TestAdminController < Minitest::Test
   def test_index_returns_stats
     # Create test organization
@@ -165,3 +166,4 @@ class TestAdminController < Minitest::Test
     tempfile.verify
   end
 end
+# rubocop:enable Metrics/ClassLength
