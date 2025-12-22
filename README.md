@@ -1,9 +1,19 @@
-# Roaster
+<div align="center">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+    <img src="public/roaster-logo.webp" alt="Roaster Logo" width="150"/>
+    <h1 style="margin: 0;">Roaster</h1>
+  </div>
 
-[![CI](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml)
-[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/silver-river-us/roaster)
+  <br/>
 
-**Privacy-first email verification for organizations that care about data protection.**
+  **Privacy-first email verification for organizations that care about data protection.**
+
+  [![CI](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml)
+  [![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/silver-river-us/roaster)
+  [![License: O'Saasy](https://img.shields.io/badge/License-O'Saasy-blue.svg)](LICENSE.md)
+</div>
+
+---
 
 Roaster is an open-source email verification service that uses SHA-256 hashing to verify email addresses without storing any personal data. Organizations can maintain verified email lists while ensuring complete privacy and GDPR compliance.
 
