@@ -335,7 +335,3 @@ Potential areas for expansion:
 4. **Audit Logging**: Track all administrative actions
 5. **Backup System**: Automated LiteFS backups to S3
 6. **Redis Cache**: Replace in-memory cache with Redis for multi-server rate limiting
-
-## License
-
-This architecture is part of Roaster, licensed under the [O'Saasy License](../LICENSE.md).
