@@ -1,73 +1,40 @@
 # Roaster
 
-Email verification service with privacy-preserving hashed storage.
+[![CI](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/silver-river-us/roaster/actions/workflows/ci.yml)
+[![Test Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/silver-river-us/roaster)
 
-## Structure
+**Privacy-first email verification for organizations that care about data protection.**
 
-```
-roaster/
-├── config.ru                        # Application entry point
-├── public/
-│   └── example_emails.csv           # Example CSV template
-├── config/
-│   ├── database.rb                  # Database configuration
-│   └── routes.rb                    # Route definitions
-├── app/
-│   ├── controllers/
-│   │   ├── admin_controller.rb      # Admin business logic
-│   │   └── verification_controller.rb # Verification business logic
-│   ├── models/
-│   │   └── verified_email.rb       # Email verification model
-│   └── views/
-│       ├── index.erb                # Landing page
-│       ├── verify.erb               # Verification page
-│       └── admin.erb                # Admin dashboard
-└── db/
-    └── migrate/                     # Database migrations
-```
+Roaster is an open-source email verification service that uses SHA-256 hashing to verify email addresses without storing any personal data. Organizations can maintain verified email lists while ensuring complete privacy and GDPR compliance.
 
-## Setup
+## Features
 
-```bash
-bundle install
-rake db:migrate
-```
+- **Privacy-Preserving**: Emails are hashed using SHA-256 before storage - plaintext emails are never stored
+- **Multi-Organization Support**: Manage multiple organizations with isolated email lists
+- **Session-Based Admin**: Secure organization admin panels with bcrypt password hashing
+- **API Access**: RESTful API with key-based authentication for programmatic access
+- **CSV Import**: Bulk import verified emails via CSV upload
+- **100% Test Coverage**: Comprehensive test suite with MiniTest
+- **Open Source**: Licensed under the [O'Saasy License](LICENSE.md)
 
-## Import Emails
+## Documentation
 
-```bash
-rake db:import[path/to/emails.csv,OrganizationName]
-```
+- 📖 **[Setup Guide](docs/setup.md)** - Installation, development, and deployment instructions
+- 🏗️ **[Architecture](docs/architecture.md)** - Technical architecture and data flow diagrams
 
-Example:
-```bash
-rake db:import[public/example_emails.csv,MFA]
-```
+## Contributing
 
-CSV format should have one column with header "email":
-```csv
-email
-user@example.com
-member@museum.org
-```
+We welcome contributions! Here's how to get started:
 
-## Check Email
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Ensure tests pass with 100% coverage
+5. Run RuboCop and fix any issues
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
 
-```bash
-rake db:check[user@example.com]
-```
+## License
 
-## Run Server
-
-```bash
-bin/dev
-```
-
-Visit `http://localhost:4567`
-
-## How It Works
-
-- Emails are hashed using SHA256 before storage
-- Only hashes are stored in the database (privacy-preserving)
-- Verification checks if hash of submitted email exists
-- Original emails are never stored
+This project is licensed under the [O'Saasy License](LICENSE.md).
