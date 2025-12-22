@@ -11,8 +11,8 @@ DB = Sequel.connect('sqlite://db/roaster_test.db')
 Sequel::Model.plugin :timestamps, update_on_create: true
 
 # Load models
-require_relative '../models/organization'
-require_relative '../models/verified_email'
+require_relative '../app/models/organization'
+require_relative '../app/models/verified_email'
 
 # Run migrations for test database
 Sequel.extension :migration

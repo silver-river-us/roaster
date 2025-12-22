@@ -1,9 +1,9 @@
 require 'sinatra'
-require_relative '../lib/auth'
-require_relative '../models/organization'
-require_relative '../controllers/admin_controller'
-require_relative '../controllers/super_admin_controller'
-require_relative '../controllers/verification_controller'
+require_relative '../app/lib/auth'
+require_relative '../app/models/organization'
+require_relative '../app/controllers/admin_controller'
+require_relative '../app/controllers/super_admin_controller'
+require_relative '../app/controllers/verification_controller'
 
 helpers Auth
 

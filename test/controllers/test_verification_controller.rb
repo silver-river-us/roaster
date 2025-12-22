@@ -1,5 +1,5 @@
 require_relative '../test_helper'
-require_relative '../../controllers/verification_controller'
+require_relative '../../app/controllers/verification_controller'
 
 class TestVerificationController < Minitest::Test
   def test_index_returns_template_and_locals

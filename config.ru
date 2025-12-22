@@ -2,6 +2,9 @@ require 'dotenv/load'
 require 'sinatra'
 require 'rack/session'
 
+# Set views directory
+set :views, File.expand_path('app/views', __dir__)
+
 # Enable sessions
 use Rack::Session::Cookie,
     key: 'roaster.session',
@@ -14,11 +17,11 @@ use Rack::Session::Cookie,
 require_relative 'config/database'
 
 # Models
-require_relative 'models/verified_email'
+require_relative 'app/models/verified_email'
 
 # Controllers
-require_relative 'controllers/admin_controller'
-require_relative 'controllers/verification_controller'
+require_relative 'app/controllers/admin_controller'
+require_relative 'app/controllers/verification_controller'
 
 # Routes
 require_relative 'config/routes'

@@ -1,5 +1,5 @@
 require_relative '../test_helper'
-require_relative '../../controllers/super_admin_controller'
+require_relative '../../app/controllers/super_admin_controller'
 
 # rubocop:disable Metrics/ClassLength
 class TestSuperAdminController < Minitest::Test

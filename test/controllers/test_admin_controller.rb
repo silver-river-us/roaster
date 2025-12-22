@@ -1,5 +1,5 @@
 require_relative '../test_helper'
-require_relative '../../controllers/admin_controller'
+require_relative '../../app/controllers/admin_controller'
 
 class TestAdminController < Minitest::Test
   def test_index_returns_stats

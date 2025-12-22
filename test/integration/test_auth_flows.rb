@@ -3,13 +3,13 @@ ENV['RACK_ENV'] = 'test'
 require_relative '../test_helper'
 
 require 'sinatra'
-require_relative '../../controllers/admin_controller'
-require_relative '../../controllers/super_admin_controller'
-require_relative '../../controllers/verification_controller'
-require_relative '../../lib/auth'
+require_relative '../../app/controllers/admin_controller'
+require_relative '../../app/controllers/super_admin_controller'
+require_relative '../../app/controllers/verification_controller'
+require_relative '../../app/lib/auth'
 
 # Set the views directory to the root views folder
-Sinatra::Application.set :views, File.expand_path('../../views', __dir__)
+Sinatra::Application.set :views, File.expand_path('../../app/views', __dir__)
 Sinatra::Application.set :root, File.expand_path('../..', __dir__)
 
 require_relative '../../config/routes'
