@@ -21,3 +21,20 @@ Roaster is an open-source email verification service that uses SHA-256 hashing t
 
 - 📖 **[Setup Guide](docs/setup.md)** - Installation, development, and deployment instructions
 - 🏗️ **[Architecture](docs/architecture.md)** - Technical architecture and data flow diagrams
+
+## Contributing
+
+We welcome contributions! Here's how to get started:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Ensure tests pass with 100% coverage
+5. Run RuboCop and fix any issues
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
+
+## License
+
+This project is licensed under the [O'Saasy License](LICENSE.md).
