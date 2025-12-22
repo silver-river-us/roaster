@@ -13,7 +13,9 @@ namespace :db do
   desc 'Run migrations'
   task :migrate do
     require 'sequel'
-    db = Sequel.connect('sqlite://db/roaster.db')
+    # Use LiteFS mount path in production, local db in development
+    db_path = ENV['LITEFS_DIR'] ? "#{ENV['LITEFS_DIR']}/roaster.db" : 'db/roaster.db'
+    db = Sequel.connect("sqlite://#{db_path}")
     require 'sequel/extensions/migration'
     Sequel::Migrator.run(db, 'db/migrate')
     puts 'Migrations completed'

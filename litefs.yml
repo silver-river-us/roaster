@@ -1,0 +1,43 @@
+# LiteFS configuration for distributed SQLite on Fly.io
+# This enables read replicas across multiple regions
+
+# The fuse section controls how the FUSE file system is mounted
+fuse:
+  dir: "/litefs"
+
+# Data directory for LiteFS to store the underlying data
+data:
+  dir: "/var/lib/litefs"
+
+# Proxy settings - routes requests to primary for writes
+proxy:
+  addr: ":8080"
+  target: "localhost:4567"  # Your Sinatra app port
+  db: "roaster.db"
+  passthrough:
+    - "*.ico"
+    - "*.png"
+    - "*.jpg"
+    - "*.jpeg"
+    - "*.gif"
+    - "*.css"
+    - "*.js"
+
+# Lease configuration using Fly.io Consul
+lease:
+  type: "consul"
+  advertise-url: "http://${HOSTNAME}.vm.${FLY_APP_NAME}.internal:20202"
+  candidate: ${FLY_REGION == PRIMARY_REGION}
+  promote: true
+
+  consul:
+    url: "${FLY_CONSUL_URL}"
+    key: "litefs/${FLY_APP_NAME}"
+
+# Execute your application
+exec:
+  - cmd: "bundle exec rake db:migrate && bundle exec rackup -o 0.0.0.0 -p 4567"
+    if-candidate: true
+
+  - cmd: "bundle exec rackup -o 0.0.0.0 -p 4567"
+    if-candidate: false

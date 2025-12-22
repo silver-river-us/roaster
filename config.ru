@@ -8,6 +8,10 @@ set :views, File.expand_path('app/views', __dir__)
 # Set public directory for static files
 set :public_folder, File.expand_path('public', __dir__)
 
+# Configure Sinatra protection for Fly.io
+# Set permitted hosts for Rack::Protection::HostAuthorization
+set :protection, host_authorization: { permitted_hosts: ["roaster.fly.dev", "localhost"] }
+
 # Enable sessions
 use Rack::Session::Cookie,
     key: 'roaster.session',

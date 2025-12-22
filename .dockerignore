@@ -1,0 +1,45 @@
+# Git files
+.git
+.gitignore
+
+# Development and test files
+.env
+.env.*
+!.env.example
+
+# Database files (will be managed by LiteFS)
+db/*.db
+db/*.db-*
+
+# Test files
+test/
+spec/
+coverage/
+
+# CI/CD
+.github/
+
+# Documentation
+README.md
+*.md
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Dependencies (will be installed in container)
+vendor/bundle
+.bundle/
+
+# Logs
+*.log
+log/
+
+# Temporary files
+tmp/
