@@ -37,11 +37,45 @@ end
 
 # Verify Page
 get '/verify' do
-  render_controller VerificationController.verify_page({})
+  render_controller VerificationController.verify_page(params, {})
 end
 
 post '/verify' do
   render_controller VerificationController.verify(params, {})
+end
+
+# API v1 Verification Endpoint
+post '/api/v1/verify' do
+  content_type :json
+
+  # Get API key from Authorization header
+  auth_header = request.env['HTTP_AUTHORIZATION']
+  api_key = auth_header&.sub(/^Bearer /, '')
+
+  # Authenticate API key
+  authenticated_key = ApiKey.authenticate(api_key)
+
+  unless authenticated_key
+    halt 401, { error: 'Invalid or missing API key' }.to_json
+  end
+
+  # Get email from request body
+  request.body.rewind
+  body = JSON.parse(request.body.read) rescue {}
+  email = body['email']
+
+  unless email
+    halt 400, { error: 'Email is required' }.to_json
+  end
+
+  # Check if email is verified
+  verified_email = VerifiedEmail.find_by_email(email)
+
+  if verified_email
+    { verified: true, organization: verified_email.organization_name }.to_json
+  else
+    { verified: false }.to_json
+  end
 end
 
 # Super Admin Login
@@ -95,6 +129,16 @@ end
 post '/super-admin/organizations/:id/delete' do
   require_super_admin
   render_controller SuperAdminController.delete_organization(params, {})
+end
+
+post '/super-admin/api-keys' do
+  require_super_admin
+  render_controller SuperAdminController.create_api_key(params, {})
+end
+
+post '/super-admin/api-keys/:id/delete' do
+  require_super_admin
+  render_controller SuperAdminController.delete_api_key(params, {})
 end
 
 # Organization Admin Login

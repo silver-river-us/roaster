@@ -2,6 +2,7 @@
 class SuperAdminController
   def self.index(response)
     response[:organizations] = Organization.order(:name).all
+    response[:api_keys] = ApiKey.order(Sequel.desc(:created_at)).all
     response[:title] = 'Roaster - Super Admin'
     response[:show_super_admin_nav] = true
     { template: :super_admin, locals: response }
@@ -136,8 +137,37 @@ class SuperAdminController
     }
   end
 
+  def self.create_api_key(params, response)
+    name = params[:name]&.strip
+
+    if name.nil? || name.empty?
+      response[:error] = 'API key name is required'
+    else
+      result = ApiKey.generate(name)
+      response[:success] = "API key '#{name}' created successfully"
+      response[:new_api_key] = result[:raw_key]
+    end
+
+    render_super_admin_response(response)
+  end
+
+  def self.delete_api_key(params, response)
+    api_key_id = params[:id]
+
+    api_key = ApiKey[api_key_id]
+    if api_key
+      api_key.delete
+      response[:success] = "API key '#{api_key.name}' deleted successfully"
+    else
+      response[:error] = 'API key not found'
+    end
+
+    render_super_admin_response(response)
+  end
+
   def self.render_super_admin_response(response)
     response[:organizations] = Organization.order(:name).all
+    response[:api_keys] = ApiKey.order(Sequel.desc(:created_at)).all
     response[:title] = 'Roaster - Super Admin'
     response[:show_super_admin_nav] = true
     { template: :super_admin, locals: response }

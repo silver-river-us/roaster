@@ -18,6 +18,7 @@ require_relative 'config/database'
 
 # Models
 require_relative 'app/models/verified_email'
+require_relative 'app/models/api_key'
 
 # Controllers
 require_relative 'app/controllers/admin_controller'
