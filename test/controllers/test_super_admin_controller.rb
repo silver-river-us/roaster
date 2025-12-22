@@ -172,5 +172,40 @@ class TestSuperAdminController < Minitest::Test
 
     assert_equal 'Organization not found', response[:locals][:error]
   end
+
+  def test_update_organization_not_found
+    params = { id: 9999, name: 'Test', username: 'test', password: 'pass' }
+
+    response = SuperAdminController.update_organization(params, {})
+
+    assert_equal 'Organization not found', response[:locals][:error]
+  end
+
+  def test_update_organization_with_duplicate_constraint
+    org1 = Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
+    org2 = Organization.create_with_password(name: 'Org 2', username: 'org2', password: 'pass')
+
+    params = { id: org2.id, name: 'Org 1', username: 'org2', password: '' }
+
+    response = SuperAdminController.update_organization(params, {})
+
+    assert_match(/already exists/, response[:locals][:error])
+  end
+
+  def test_stats_method
+    # Create some test data
+    org1 = Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
+    org2 = Organization.create_with_password(name: 'Org 2', username: 'org2', password: 'pass')
+
+    VerifiedEmail.create(email_hash: 'hash1', organization_name: org1.name)
+    VerifiedEmail.create(email_hash: 'hash2', organization_name: org1.name)
+    VerifiedEmail.create(email_hash: 'hash3', organization_name: org2.name)
+
+    stats = SuperAdminController.stats
+
+    assert_equal 3, stats[:total_emails]
+    assert_equal 2, stats[:total_organizations]
+    assert_equal 2, stats[:organizations_breakdown].count
+  end
 end
 # rubocop:enable Metrics/ClassLength

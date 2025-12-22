@@ -1,5 +1,22 @@
 ENV['RACK_ENV'] = 'test'
 
+# SimpleCov must be started before any application code is loaded
+require 'simplecov'
+require 'simplecov-console'
+
+SimpleCov.start do
+  add_filter '/test/'
+  add_filter '/config/'
+  add_filter '/db/'
+
+  # Use console formatter for terminal output with all files shown
+  SimpleCov.formatter = SimpleCov::Formatter::Console
+
+  # Configure console formatter to show all files
+  SimpleCov::Formatter::Console.table_options = { max_width: 200 }
+  SimpleCov::Formatter::Console.show_covered = true
+end
+
 require 'minitest/autorun'
 require 'rack/test'
 require 'sequel'

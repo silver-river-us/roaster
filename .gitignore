@@ -8,3 +8,4 @@ roaster.db-*
 .claude/
 .DS_Store
 **/.DS_Store
+coverage/

@@ -116,4 +116,52 @@ class TestAdminController < Minitest::Test
     File.delete(csv_path)
     tempfile.verify
   end
+
+  def test_upload_with_overwrite_flag
+    # Create test organization
+    org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+
+    # Add existing emails
+    VerifiedEmail.create(email_hash: 'oldhash1', organization_name: 'Test Org')
+    VerifiedEmail.create(email_hash: 'oldhash2', organization_name: 'Test Org')
+
+    csv_path = '/tmp/upload_test.csv'
+    File.write(csv_path, "email\ntest1@example.com\ntest2@example.com\n")
+
+    tempfile = Minitest::Mock.new
+    tempfile.expect(:path, csv_path)
+
+    params = {
+      csv_file: { tempfile: tempfile },
+      overwrite: 'true'
+    }
+
+    response = AdminController.upload(org, params, {})
+
+    assert_match(/Deleted 2 existing emails/, response[:locals][:success])
+    assert_match(/Successfully imported 2 emails/, response[:locals][:success])
+    assert_equal 2, VerifiedEmail.where(organization_name: 'Test Org').count
+
+    File.delete(csv_path)
+    tempfile.verify
+  end
+
+  def test_upload_with_import_error
+    # Create test organization
+    org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+
+    tempfile = Minitest::Mock.new
+    tempfile.expect(:path, '/nonexistent/path.csv')
+
+    params = {
+      csv_file: { tempfile: tempfile }
+    }
+
+    response = AdminController.upload(org, params, {})
+
+    assert_match(/Error importing CSV/, response[:locals][:error])
+    assert_nil response[:locals][:success]
+
+    tempfile.verify
+  end
 end

@@ -1,11 +1,13 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    ansi (1.5.0)
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt (3.1.20)
     bigdecimal (4.0.1)
     csv (3.3.5)
+    docile (1.4.1)
     dotenv (3.2.0)
     json (2.18.0)
     language_server-protocol (3.17.0.5)
@@ -59,6 +61,16 @@ GEM
     ruby2_keywords (0.0.5)
     sequel (5.99.0)
       bigdecimal
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-console (0.9.4)
+      ansi
+      simplecov
+      terminal-table
+    simplecov-html (0.13.2)
+    simplecov_json_formatter (0.1.4)
     sinatra (4.2.1)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
@@ -68,6 +80,8 @@ GEM
       tilt (~> 2.0)
     sqlite3 (2.8.1-arm64-darwin)
     sqlite3 (2.8.1-x86_64-linux-gnu)
+    terminal-table (4.0.0)
+      unicode-display_width (>= 1.1.1, < 4)
     tilt (2.6.1)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
@@ -90,6 +104,8 @@ DEPENDENCIES
   rubocop
   rubocop-rake
   sequel
+  simplecov
+  simplecov-console
   sinatra
   sqlite3
 

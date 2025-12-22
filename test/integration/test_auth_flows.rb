@@ -172,5 +172,14 @@ class TestAuthFlows < Minitest::Test
     follow_redirect!
     assert_equal '/admin/login', last_request.path
   end
+
+  def test_admin_with_invalid_organization_id_redirects
+    # Set a session with an organization_id that doesn't exist
+    get '/admin', {}, 'rack.session' => { organization_id: 99999 }
+
+    assert last_response.redirect?
+    follow_redirect!
+    assert_equal '/admin/login', last_request.path
+  end
 end
 # rubocop:enable Metrics/ClassLength
