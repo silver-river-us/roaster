@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 
+gem 'bcrypt'
 gem 'csv'
+gem 'dotenv'
 gem 'puma'
+gem 'rack-session'
 gem 'rackup'
 gem 'rake'
 gem 'sequel'
@@ -16,4 +19,6 @@ end
 group :test do
   gem 'minitest'
   gem 'rack-test'
+  gem 'simplecov', require: false
+  gem 'simplecov-console', require: false
 end

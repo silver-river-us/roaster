@@ -6,9 +6,16 @@ class VerifiedEmail < Sequel::Model
     Digest::SHA256.hexdigest(email.downcase.strip)
   end
 
-  def self.verified?(email)
+  def self.verified?(email, organization_name)
+    return false if organization_name.nil? || organization_name.empty?
+
     email_hash = hash_email(email)
-    where(email_hash: email_hash).any?
+    where(email_hash: email_hash, organization_name: organization_name).any?
+  end
+
+  def self.find_by_email(email)
+    email_hash = hash_email(email)
+    first(email_hash: email_hash)
   end
 
   def self.import_from_csv(csv_path, organization_name = nil)

@@ -1,5 +1,25 @@
 ENV['RACK_ENV'] = 'test'
 
+# SimpleCov must be started before any application code is loaded
+require 'simplecov'
+require 'simplecov-console'
+
+SimpleCov.start do
+  add_filter '/test/'
+  add_filter '/config/'
+  add_filter '/db/'
+
+  # Use console formatter for terminal output with all files shown
+  SimpleCov.formatter = SimpleCov::Formatter::Console
+
+  # Configure console formatter to show all files
+  SimpleCov::Formatter::Console.table_options = { max_width: 200 }
+  SimpleCov::Formatter::Console.show_covered = true
+
+  # Require 100% coverage - fail CI if coverage drops below 100%
+  minimum_coverage line: 100
+end
+
 require 'minitest/autorun'
 require 'rack/test'
 require 'sequel'
@@ -11,7 +31,9 @@ DB = Sequel.connect('sqlite://db/roaster_test.db')
 Sequel::Model.plugin :timestamps, update_on_create: true
 
 # Load models
-require_relative '../models/verified_email'
+require_relative '../app/models/organization'
+require_relative '../app/models/verified_email'
+require_relative '../app/models/api_key'
 
 # Run migrations for test database
 Sequel.extension :migration
@@ -21,5 +43,7 @@ Sequel::Migrator.run(DB, 'db/migrate')
 class Minitest::Test
   def setup
     DB[:verified_emails].delete
+    DB[:organizations].delete
+    DB[:api_keys].delete
   end
 end

@@ -19,11 +19,11 @@ class TestVerifiedEmail < Minitest::Test
       organization_name: 'Test Org'
     )
 
-    assert VerifiedEmail.verified?(email), 'Should return true for verified email'
+    assert VerifiedEmail.verified?(email, 'Test Org'), 'Should return true for verified email'
   end
 
   def test_verified_when_email_does_not_exist
-    refute VerifiedEmail.verified?('notfound@example.com'), 'Should return false for unverified email'
+    refute VerifiedEmail.verified?('notfound@example.com', 'Test Org'), 'Should return false for unverified email'
   end
 
   def test_import_from_csv
@@ -62,5 +62,25 @@ class TestVerifiedEmail < Minitest::Test
     assert_equal 1, VerifiedEmail.count, 'Database should have 1 record'
 
     File.delete(csv_path)
+  end
+
+  def test_find_by_email_returns_verified_email
+    email = 'test@example.com'
+    created = VerifiedEmail.create(
+      email_hash: VerifiedEmail.hash_email(email),
+      organization_name: 'Test Org'
+    )
+
+    found = VerifiedEmail.find_by_email(email)
+
+    assert found
+    assert_equal created.id, found.id
+    assert_equal 'Test Org', found.organization_name
+  end
+
+  def test_find_by_email_returns_nil_when_not_found
+    found = VerifiedEmail.find_by_email('notfound@example.com')
+
+    assert_nil found
   end
 end

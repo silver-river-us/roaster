@@ -1,0 +1,70 @@
+<nav class="bg-gray-800 border-b border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          <img src="/roaster-logo.webp" alt="Roaster Logo" class="h-10 w-10 mr-2 sm:mr-3">
+          <h1 class="text-xl sm:text-2xl font-bold text-white">Roaster</h1>
+          <span class="hidden lg:inline ml-3 text-sm text-gray-300">Privacy-First Email Verification</span>
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex gap-4">
+        <a href="/admin" class="text-sm text-orange-400 hover:text-orange-300 font-medium">Organization Login</a>
+        <a href="/super-admin" class="text-sm text-gray-300 hover:text-white font-medium">Admin</a>
+        <% if @show_admin_nav || @show_super_admin_nav %>
+          <a href="/logout" class="text-sm text-red-400 hover:text-red-300 font-medium">Sign Out</a>
+        <% end %>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" id="mobile-menu-button" aria-expanded="false">
+        <span class="sr-only">Open main menu</span>
+        <!-- Hamburger Icon -->
+        <svg class="block h-6 w-6" id="menu-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <!-- Close Icon (hidden by default) -->
+        <svg class="hidden h-6 w-6" id="close-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu (hidden by default) -->
+  <div class="hidden md:hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+      <a href="/admin" class="block px-3 py-2 rounded-md text-base font-medium text-orange-400 hover:text-orange-300 hover:bg-gray-700">Organization Login</a>
+      <a href="/super-admin" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Admin</a>
+      <% if @show_admin_nav || @show_super_admin_nav %>
+        <a href="/logout" class="block px-3 py-2 rounded-md text-base font-medium text-red-400 hover:text-red-300 hover:bg-gray-700">Sign Out</a>
+      <% end %>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Mobile menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+
+    if (menuButton) {
+      menuButton.addEventListener('click', function() {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.classList.toggle('hidden');
+        menuIcon.classList.toggle('hidden');
+        menuIcon.classList.toggle('block');
+        closeIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('block');
+      });
+    }
+  });
+</script>

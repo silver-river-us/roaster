@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Roaster API
+  description: Privacy-First Email Verification API
+  version: 1.0.0
+  contact:
+    name: Roaster API Support
+servers:
+  - url: /api/v1
+    description: Current server
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: "API key for authentication. Include as 'Authorization: Bearer YOUR_API_KEY'"
+
+  schemas:
+    VerifyEmailRequest:
+      type: object
+      required:
+        - email
+        - organization_username
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+          description: The email address to verify
+        organization_username:
+          type: string
+          example: mfa
+          description: The organization username to verify against
+
+    VerifyEmailResponse:
+      type: object
+      properties:
+        verified:
+          type: boolean
+          description: Whether the email is verified
+          example: true
+        organization:
+          type: string
+          description: The organization name that verified the email (only present if verified is true)
+          example: Museum of Fine Arts
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Bad request
+
+  responses:
+    BadRequestError:
+      description: Bad request - invalid API key, missing email, or other validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: Bad request
+
+paths:
+  /verify:
+    post:
+      summary: Verify an email address
+      description: |
+        Verifies if an email address exists in the verified email database.
+
+        **Privacy Note:** Email addresses are hashed using SHA-256 before storage and lookup.
+        The actual email address is never stored in the database.
+      operationId: verifyEmail
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+            example:
+              email: user@example.com
+              organization_username: mfa
+      responses:
+        '200':
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyEmailResponse'
+              examples:
+                verified:
+                  summary: Email is verified
+                  value:
+                    verified: true
+                    organization: Museum of Fine Arts
+                notVerified:
+                  summary: Email is not verified
+                  value:
+                    verified: false
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+
+tags:
+  - name: Verification
+    description: Email verification endpoints
