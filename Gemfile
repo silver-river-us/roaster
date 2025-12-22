@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
+gem 'bcrypt'
 gem 'csv'
+gem 'dotenv'
 gem 'puma'
 gem 'rackup'
 gem 'rake'

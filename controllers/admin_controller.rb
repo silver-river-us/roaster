@@ -1,6 +1,7 @@
 class AdminController
-  def self.index(response)
-    response[:stats] = stats
+  def self.index(current_organization, response)
+    response[:stats] = stats(current_organization)
+    response[:organization] = current_organization
     response[:success] ||= nil
     response[:error] ||= nil
     { template: :admin, locals: response }
@@ -13,21 +14,21 @@ class AdminController
     response
   end
 
-  def self.upload(params, response)
+  def self.upload(current_organization, params, response)
     # Validate file upload
     unless params[:csv_file] && params[:csv_file][:tempfile]
       response[:error] = 'Please select a CSV file'
       response[:success] = nil
-      response[:stats] = stats
+      response[:stats] = stats(current_organization)
+      response[:organization] = current_organization
       return { template: :admin, locals: response }
     end
 
-    # Import CSV
-    organization_name = params[:organization_name]&.strip
+    # Import CSV with organization name
     csv_path = params[:csv_file][:tempfile].path
 
     begin
-      result = VerifiedEmail.import_from_csv(csv_path, organization_name)
+      result = VerifiedEmail.import_from_csv(csv_path, current_organization.name)
 
       success_message = "Successfully imported #{result[:imported]} emails"
       success_message += " (#{result[:duplicates]} duplicates skipped)" if result[:duplicates].positive?
@@ -39,14 +40,15 @@ class AdminController
       response[:success] = nil
     end
 
-    response[:stats] = stats
+    response[:stats] = stats(current_organization)
+    response[:organization] = current_organization
     { template: :admin, locals: response }
   end
 
-  def self.stats
+  def self.stats(current_organization)
     {
-      total_emails: VerifiedEmail.count,
-      organizations: VerifiedEmail.select(:organization_name).distinct.count
+      total_emails: VerifiedEmail.where(organization_name: current_organization.name).count,
+      organization_name: current_organization.name
     }
   end
   private_class_method :stats

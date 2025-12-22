@@ -3,8 +3,10 @@ GEM
   specs:
     ast (2.4.3)
     base64 (0.3.0)
+    bcrypt (3.1.20)
     bigdecimal (4.0.1)
     csv (3.3.5)
+    dotenv (3.2.0)
     json (2.18.0)
     language_server-protocol (3.17.0.5)
     lint_roller (1.1.0)
@@ -76,7 +78,9 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bcrypt
   csv
+  dotenv
   minitest
   puma
   rack-test
