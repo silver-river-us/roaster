@@ -10,9 +10,45 @@
       </div>
 
       <!-- Stats -->
-      <div class="bg-white rounded-lg shadow p-4 sm:p-6 mb-8">
-        <div class="text-2xl sm:text-3xl font-bold text-gray-900"><%= @stats ? @stats[:total_emails] : 0 %></div>
-        <div class="text-sm sm:text-base text-gray-600">Total Verified Emails for <%= @stats ? @stats[:organization_name] : 'your organization' %></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+          <div class="text-2xl sm:text-3xl font-bold text-gray-900"><%= @stats ? @stats[:total_emails] : 0 %></div>
+          <div class="text-sm sm:text-base text-gray-600">Total Verified Emails for <%= @stats ? @stats[:organization_name] : 'your organization' %></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow p-4 sm:p-6">
+          <% if @stats && @stats[:last_upload_at] %>
+            <div class="text-2xl sm:text-3xl font-bold text-gray-900" id="last-upload-display">
+              <span class="text-lg sm:text-xl">—</span>
+            </div>
+            <div class="text-sm sm:text-base text-gray-600">Last Upload</div>
+            <script>
+              // Format the timestamp in the user's local timezone
+              (function() {
+                const timestamp = new Date('<%= @stats[:last_upload_at].iso8601 %>');
+                const displayElement = document.getElementById('last-upload-display');
+
+                // Format: "Dec 22, 2024 at 3:45 PM"
+                const options = {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                };
+
+                displayElement.innerHTML = '<span class="text-lg sm:text-xl">' +
+                  timestamp.toLocaleString(undefined, options).replace(',', ' at') +
+                  '</span>';
+              })();
+            </script>
+          <% else %>
+            <div class="text-2xl sm:text-3xl font-bold text-gray-400">—</div>
+            <div class="text-sm sm:text-base text-gray-600">Last Upload</div>
+            <p class="text-xs sm:text-sm text-gray-500 mt-2">No uploads yet</p>
+          <% end %>
+        </div>
       </div>
 
       <!-- Messages -->
@@ -42,22 +78,59 @@
       <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
         <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Upload Email List</h2>
 
-        <form method="POST" action="/admin/upload" enctype="multipart/form-data" class="space-y-6">
+        <form method="POST" action="/admin/upload" enctype="multipart/form-data" class="space-y-6" id="upload-form">
           <div>
-            <label for="csv_file" class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
               CSV File
             </label>
-            <input
-              type="file"
-              id="csv_file"
-              name="csv_file"
-              accept=".csv"
-              required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
-            />
-            <p class="mt-1 text-sm text-gray-500">
-              CSV must have one column with header "email"
-            </p>
+            <!-- Dropzone -->
+            <div
+              id="dropzone"
+              class="relative border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-orange-500 transition cursor-pointer bg-gray-50 hover:bg-orange-50"
+            >
+              <input
+                type="file"
+                id="csv_file"
+                name="csv_file"
+                accept=".csv"
+                required
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <div id="dropzone-content">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                  <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <p class="mt-2 text-sm text-gray-600">
+                  <span class="font-semibold text-orange-600">Click to upload</span> or drag and drop
+                </p>
+                <p class="mt-1 text-xs text-gray-500">CSV file with "email" column</p>
+              </div>
+              <div id="file-name" class="hidden mt-4">
+                <div class="flex items-center justify-center text-sm text-gray-700">
+                  <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                  <span id="selected-file-name" class="font-medium"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overwrite Checkbox -->
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <input
+                id="overwrite"
+                name="overwrite"
+                type="checkbox"
+                value="true"
+                class="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+              />
+            </div>
+            <div class="ml-3 text-sm">
+              <label for="overwrite" class="font-medium text-gray-700">Overwrite all existing emails</label>
+              <p class="text-gray-500">If checked, all existing emails for this organization will be deleted before importing the new list.</p>
+            </div>
           </div>
 
           <div class="flex flex-col sm:flex-row gap-4">
@@ -88,3 +161,70 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // Dropzone functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('csv_file');
+      const dropzoneContent = document.getElementById('dropzone-content');
+      const fileName = document.getElementById('file-name');
+      const selectedFileName = document.getElementById('selected-file-name');
+
+      // Prevent default drag behaviors
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Highlight dropzone when dragging over it
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, highlight, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, unhighlight, false);
+      });
+
+      function highlight(e) {
+        dropzone.classList.add('border-orange-500', 'bg-orange-50');
+      }
+
+      function unhighlight(e) {
+        dropzone.classList.remove('border-orange-500', 'bg-orange-50');
+      }
+
+      // Handle dropped files
+      dropzone.addEventListener('drop', handleDrop, false);
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+
+        if (files.length > 0) {
+          fileInput.files = files;
+          updateFileName(files[0]);
+        }
+      }
+
+      // Handle file selection via click
+      fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+          updateFileName(e.target.files[0]);
+        }
+      });
+
+      function updateFileName(file) {
+        if (file) {
+          selectedFileName.textContent = file.name;
+          dropzoneContent.classList.add('hidden');
+          fileName.classList.remove('hidden');
+        }
+      }
+    });
+  </script>

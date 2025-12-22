@@ -3,6 +3,8 @@ vendor/bundle/
 .env
 db/*.db
 db/*.db-*
+roaster.db
+roaster.db-*
 .claude/
 .DS_Store
 **/.DS_Store
