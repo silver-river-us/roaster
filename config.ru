@@ -12,6 +12,12 @@ set :public_folder, File.expand_path('public', __dir__)
 # Set permitted hosts for Rack::Protection::HostAuthorization
 set :protection, host_authorization: { permitted_hosts: ['roaster.fly.dev', 'localhost'] }
 
+# Enable rate limiting (skip in test environment when loaded by test files)
+unless ENV['RACK_ENV'] == 'test' && defined?(Minitest)
+  require_relative 'config/rack_attack'
+  use Rack::Attack
+end
+
 # Enable sessions
 use Rack::Session::Cookie,
     key: 'roaster.session',

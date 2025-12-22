@@ -13,6 +13,7 @@ Roaster is an open-source email verification service that uses SHA-256 hashing t
 - **Multi-Organization Support**: Manage multiple organizations with isolated email lists
 - **Session-Based Admin**: Secure organization admin panels with bcrypt password hashing
 - **API Access**: RESTful API with key-based authentication for programmatic access
+- **Rate Limiting**: IP-based throttling to prevent abuse and ensure fair usage
 - **CSV Import**: Bulk import verified emails via CSV upload
 - **100% Test Coverage**: Comprehensive test suite with MiniTest
 - **Open Source**: Licensed under the [O'Saasy License](LICENSE.md)
