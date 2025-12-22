@@ -1,34 +1,44 @@
 module Auth
   def require_super_admin
-    @auth ||= Rack::Auth::Basic::Request.new(request.env)
-
-    unless @auth.provided? && @auth.basic? && @auth.credentials && valid_super_admin?(@auth.credentials)
-      response['WWW-Authenticate'] = 'Basic realm="Super Admin"'
-      halt 401, "Unauthorized\n"
+    unless session[:super_admin]
+      redirect '/super-admin/login'
     end
   end
 
   def require_organization
-    @auth ||= Rack::Auth::Basic::Request.new(request.env)
-
-    unless @auth.provided? && @auth.basic? && @auth.credentials
-      response['WWW-Authenticate'] = 'Basic realm="Organization Login"'
-      halt 401, "Unauthorized\n"
+    unless session[:organization_id]
+      redirect '/admin/login'
     end
 
-    username, password = @auth.credentials
-    @current_organization = Organization.authenticate(username, password)
-
+    @current_organization = Organization[session[:organization_id]]
     unless @current_organization
-      response['WWW-Authenticate'] = 'Basic realm="Organization Login"'
-      halt 401, "Unauthorized\n"
+      session.clear
+      redirect '/admin/login'
     end
 
     @current_organization
   end
 
-  def valid_super_admin?(credentials)
-    username, password = credentials
-    username == ENV['SUPER_ADMIN_USERNAME'] && password == ENV['SUPER_ADMIN_PASSWORD']
+  def authenticate_super_admin(username, password)
+    if username == ENV['SUPER_ADMIN_USERNAME'] && password == ENV['SUPER_ADMIN_PASSWORD']
+      session[:super_admin] = true
+      true
+    else
+      false
+    end
+  end
+
+  def authenticate_organization(username, password)
+    org = Organization.authenticate(username, password)
+    if org
+      session[:organization_id] = org.id
+      org
+    else
+      false
+    end
+  end
+
+  def logout
+    session.clear
   end
 end

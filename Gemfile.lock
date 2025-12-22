@@ -83,6 +83,7 @@ DEPENDENCIES
   dotenv
   minitest
   puma
+  rack-session
   rack-test
   rackup
   rake

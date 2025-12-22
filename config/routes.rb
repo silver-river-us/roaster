@@ -31,7 +31,26 @@ post '/verify' do
   render_controller VerificationController.verify(params, {})
 end
 
-# Super Admin (Basic Auth with env variables)
+# Super Admin Login
+get '/super-admin/login' do
+  erb :super_admin_login
+end
+
+post '/super-admin/login' do
+  if authenticate_super_admin(params[:username], params[:password])
+    redirect '/super-admin'
+  else
+    @error = 'Invalid username or password'
+    erb :super_admin_login
+  end
+end
+
+get '/super-admin/logout' do
+  logout
+  redirect '/'
+end
+
+# Super Admin (Session-based auth)
 get '/super-admin' do
   require_super_admin
   render_controller SuperAdminController.index({})
@@ -57,7 +76,26 @@ post '/super-admin/organizations/:id/delete' do
   render_controller SuperAdminController.delete_organization(params, {})
 end
 
-# Organization Admin (Basic Auth with org credentials)
+# Organization Admin Login
+get '/admin/login' do
+  erb :admin_login
+end
+
+post '/admin/login' do
+  if authenticate_organization(params[:username], params[:password])
+    redirect '/admin'
+  else
+    @error = 'Invalid username or password'
+    erb :admin_login
+  end
+end
+
+get '/admin/logout' do
+  logout
+  redirect '/'
+end
+
+# Organization Admin (Session-based auth)
 get '/admin' do
   current_org = require_organization
   render_controller AdminController.index(current_org, {})
