@@ -1,89 +1,87 @@
 class VerificationController
-  def self.index(response)
-    response[:success] ||= nil
-    response[:error] ||= nil
-    response[:email] ||= nil
-    response[:organization_username] ||= nil
-    { template: :index, locals: response }
+  def self.verify_page(params)
+    reset_state
+    @email = params[:email]
+    @organization_username = params[:organization_username]
+    @api_key = params[:api_key]
+    @title = 'Verify Email - Roaster'
+
+    { template: :verify, locals: build_locals }
   end
 
-  def self.verify_page(params, response)
-    response[:success] ||= nil
-    response[:error] ||= nil
-    response[:email] = params[:email] if params[:email]
-    response[:organization_username] = params[:organization_username] if params[:organization_username]
-    response[:api_key] = params[:api_key] if params[:api_key]
-    response[:title] = 'Verify Email - Roaster'
-    { template: :verify, locals: response }
-  end
-
-  def self.verify(params, response)
+  def self.verify(params)
+    reset_state
     api_key = params[:api_key]&.strip
     email = params[:email]&.strip
     org_username = params[:organization_username]&.strip
 
-    if inputs_invalid?(api_key, email, org_username)
-      set_validation_error(response, api_key, email, org_username)
-    elsif !valid_api_key?(api_key)
-      # Don't leak that API key is invalid - show generic error
-      set_error_response(response, api_key, email, org_username)
+    if missing_required_fields?(api_key, email, org_username)
+      set_error('Please enter API key, organization username, and email address', api_key, email, org_username)
+    elsif invalid_api_key?(api_key)
+      set_error('Email not verified', api_key, email, org_username)
     else
-      response[:api_key] = api_key
-      check_email_verification(email, org_username, response)
+      check_verification(email, org_username, api_key)
     end
 
-    response[:title] = 'Verify Email - Roaster'
-    { template: :verify, locals: response }
+    @title = 'Verify Email - Roaster'
+    { template: :verify, locals: build_locals }
   end
 
-  def self.inputs_invalid?(api_key, email, org_username)
-    api_key.nil? || api_key.empty? || email.nil? || email.empty? || org_username.nil? || org_username.empty?
+  private_class_method def self.missing_required_fields?(api_key, email, org_username)
+    [api_key, email, org_username].any? { |field| field.nil? || field.empty? }
   end
-  private_class_method :inputs_invalid?
 
-  def self.valid_api_key?(api_key)
-    !ApiKey.authenticate(api_key).nil?
+  private_class_method def self.invalid_api_key?(api_key)
+    ApiKey.authenticate(api_key).nil?
   end
-  private_class_method :valid_api_key?
 
-  def self.set_validation_error(response, api_key, email, org_username)
-    response[:error] = 'Please enter API key, organization username, and email address'
-    response[:success] = nil
-    response[:api_key] = api_key
-    response[:email] = email
-    response[:organization_username] = org_username
-  end
-  private_class_method :set_validation_error
-
-  def self.check_email_verification(email, org_username, response)
+  private_class_method def self.check_verification(email, org_username, api_key)
     org = Organization.find(username: org_username)
-    api_key = response[:api_key]
 
-    # Don't leak whether organization exists - always show generic message
     if org && VerifiedEmail.verified?(email, org.name)
-      set_success_response(response, api_key, email, org_username, org.name)
+      set_success(email, org_username, org.name, api_key)
     else
-      set_error_response(response, api_key, email, org_username)
+      # Don't leak whether organization exists
+      set_error('Email not verified', api_key, email, org_username)
     end
   end
-  private_class_method :check_email_verification
 
-  def self.set_success_response(response, api_key, email, org_username, org_name)
-    response[:success] = true
-    response[:api_key] = api_key
-    response[:email] = email
-    response[:organization_username] = org_username
-    response[:organization_name] = org_name
-    response[:error] = nil
+  private_class_method def self.set_success(email, org_username, org_name, api_key)
+    @success = true
+    @email = email
+    @organization_username = org_username
+    @organization_name = org_name
+    @api_key = api_key
+    @error = nil
   end
-  private_class_method :set_success_response
 
-  def self.set_error_response(response, api_key, email, org_username)
-    response[:error] = 'Email not verified'
-    response[:success] = nil
-    response[:api_key] = api_key
-    response[:email] = email
-    response[:organization_username] = org_username
+  private_class_method def self.set_error(message, api_key, email, org_username)
+    @error = message
+    @success = nil
+    @api_key = api_key
+    @email = email
+    @organization_username = org_username
   end
-  private_class_method :set_error_response
+
+  private_class_method def self.reset_state
+    @success = nil
+    @error = nil
+    @email = nil
+    @organization_username = nil
+    @organization_name = nil
+    @api_key = nil
+    @title = nil
+  end
+
+  private_class_method def self.build_locals
+    {
+      success: @success,
+      error: @error,
+      email: @email,
+      organization_username: @organization_username,
+      organization_name: @organization_name,
+      api_key: @api_key,
+      title: @title
+    }
+  end
 end

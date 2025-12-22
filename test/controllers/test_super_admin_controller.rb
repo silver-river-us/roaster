@@ -13,7 +13,7 @@ class TestSuperAdminController < Minitest::Test
     org2.password = 'password123'
     org2.save
 
-    response = SuperAdminController.index({})
+    response = SuperAdminController.index
 
     assert_equal :super_admin, response[:template]
     assert_equal 2, response[:locals][:organizations].count
@@ -27,7 +27,7 @@ class TestSuperAdminController < Minitest::Test
       password: 'password123'
     }
 
-    response = SuperAdminController.create_organization(params, {})
+    response = SuperAdminController.create_organization(params)
 
     assert_equal :super_admin, response[:template]
     assert_match(/created successfully/, response[:locals][:success])
@@ -42,7 +42,7 @@ class TestSuperAdminController < Minitest::Test
       password: 'password123'
     }
 
-    response = SuperAdminController.create_organization(params, {})
+    response = SuperAdminController.create_organization(params)
 
     assert_equal :super_admin, response[:template]
     assert_equal 'Organization name is required', response[:locals][:error]
@@ -57,7 +57,7 @@ class TestSuperAdminController < Minitest::Test
       password: 'password123'
     }
 
-    response = SuperAdminController.create_organization(params, {})
+    response = SuperAdminController.create_organization(params)
 
     assert_equal 'Username is required', response[:locals][:error]
     assert_equal 0, Organization.count
@@ -70,7 +70,7 @@ class TestSuperAdminController < Minitest::Test
       password: ''
     }
 
-    response = SuperAdminController.create_organization(params, {})
+    response = SuperAdminController.create_organization(params)
 
     assert_equal 'Password is required', response[:locals][:error]
     assert_equal 0, Organization.count
@@ -85,7 +85,7 @@ class TestSuperAdminController < Minitest::Test
       password: 'password123'
     }
 
-    response = SuperAdminController.create_organization(params, {})
+    response = SuperAdminController.create_organization(params)
 
     assert_match(/already exists/, response[:locals][:error])
     assert_equal 1, Organization.count
@@ -94,14 +94,14 @@ class TestSuperAdminController < Minitest::Test
   def test_edit_returns_organization
     org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
 
-    response = SuperAdminController.edit({ id: org.id }, {})
+    response = SuperAdminController.edit({ id: org.id })
 
     assert_equal :edit_organization, response[:template]
     assert_equal org.id, response[:locals][:organization].id
   end
 
   def test_edit_nonexistent_organization
-    response = SuperAdminController.edit({ id: 9999 }, {})
+    response = SuperAdminController.edit({ id: 9999 })
 
     assert_equal :super_admin, response[:template]
     assert_equal 'Organization not found', response[:locals][:error]
@@ -117,7 +117,7 @@ class TestSuperAdminController < Minitest::Test
       password: 'newpassword'
     }
 
-    response = SuperAdminController.update_organization(params, {})
+    response = SuperAdminController.update_organization(params)
 
     assert_match(/updated successfully/, response[:locals][:success])
     org.reload
@@ -136,7 +136,7 @@ class TestSuperAdminController < Minitest::Test
       password: ''
     }
 
-    response = SuperAdminController.update_organization(params, {})
+    response = SuperAdminController.update_organization(params)
 
     assert_match(/updated successfully/, response[:locals][:success])
     org.reload
@@ -153,7 +153,7 @@ class TestSuperAdminController < Minitest::Test
       username: 'testuser'
     }
 
-    response = SuperAdminController.update_organization(params, {})
+    response = SuperAdminController.update_organization(params)
 
     assert_equal 'Organization name is required', response[:locals][:error]
   end
@@ -161,14 +161,14 @@ class TestSuperAdminController < Minitest::Test
   def test_delete_organization_success
     org = Organization.create_with_password(name: 'Test Org', username: 'testuser', password: 'password123')
 
-    response = SuperAdminController.delete_organization({ id: org.id }, {})
+    response = SuperAdminController.delete_organization({ id: org.id })
 
     assert_match(/deleted successfully/, response[:locals][:success])
     assert_equal 0, Organization.count
   end
 
   def test_delete_nonexistent_organization
-    response = SuperAdminController.delete_organization({ id: 9999 }, {})
+    response = SuperAdminController.delete_organization({ id: 9999 })
 
     assert_equal 'Organization not found', response[:locals][:error]
   end
@@ -176,7 +176,7 @@ class TestSuperAdminController < Minitest::Test
   def test_update_organization_not_found
     params = { id: 9999, name: 'Test', username: 'test', password: 'pass' }
 
-    response = SuperAdminController.update_organization(params, {})
+    response = SuperAdminController.update_organization(params)
 
     assert_equal 'Organization not found', response[:locals][:error]
   end
@@ -187,26 +187,20 @@ class TestSuperAdminController < Minitest::Test
 
     params = { id: org2.id, name: 'Org 1', username: 'org2', password: '' }
 
-    response = SuperAdminController.update_organization(params, {})
+    response = SuperAdminController.update_organization(params)
 
     assert_match(/already exists/, response[:locals][:error])
   end
 
-  def test_stats_method
-    # Create some test data
-    org1 = Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
-    org2 = Organization.create_with_password(name: 'Org 2', username: 'org2', password: 'pass')
-
-    VerifiedEmail.create(email_hash: 'hash1', organization_name: org1.name)
-    VerifiedEmail.create(email_hash: 'hash2', organization_name: org1.name)
-    VerifiedEmail.create(email_hash: 'hash3', organization_name: org2.name)
-
-    stats = SuperAdminController.stats
-
-    assert_equal 3, stats[:total_emails]
-    assert_equal 2, stats[:total_organizations]
-    assert_equal 2, stats[:organizations_breakdown].count
-  end
+  # Stats method was removed in controller refactor - stats are displayed via index action
+  # def test_stats_method
+  #   org1 = Organization.create_with_password(name: 'Org 1', username: 'org1', password: 'pass')
+  #   org2 = Organization.create_with_password(name: 'Org 2', username: 'org2', password: 'pass')
+  #
+  #   VerifiedEmail.create(email_hash: 'hash1', organization_name: org1.name)
+  #   VerifiedEmail.create(email_hash: 'hash2', organization_name: org1.name)
+  #   VerifiedEmail.create(email_hash: 'hash3', organization_name: org2.name)
+  # end
 
   def test_create_organization_handles_save_errors
     params = { name: 'Test Org', username: 'testorg', password: 'password123' }
@@ -221,7 +215,7 @@ class TestSuperAdminController < Minitest::Test
       end
       org
     } do
-      response = SuperAdminController.create_organization(params, {})
+      response = SuperAdminController.create_organization(params)
       assert_match(/Error creating organization/, response[:locals][:error])
       assert_match(/Simulated database error/, response[:locals][:error])
     end
@@ -243,7 +237,7 @@ class TestSuperAdminController < Minitest::Test
       end
       mock_org
     } do
-      response = SuperAdminController.update_organization(params, {})
+      response = SuperAdminController.update_organization(params)
       assert_match(/Error updating organization/, response[:locals][:error])
       assert_match(/Simulated update error/, response[:locals][:error])
     end
@@ -260,7 +254,7 @@ class TestSuperAdminController < Minitest::Test
       end
       mock_org
     } do
-      response = SuperAdminController.delete_organization({ id: org.id }, {})
+      response = SuperAdminController.delete_organization({ id: org.id })
       assert_match(/Error deleting organization/, response[:locals][:error])
       assert_match(/Simulated delete error/, response[:locals][:error])
     end
@@ -269,7 +263,7 @@ class TestSuperAdminController < Minitest::Test
   def test_create_api_key_success
     params = { name: 'Test API Key' }
 
-    response = SuperAdminController.create_api_key(params, {})
+    response = SuperAdminController.create_api_key(params)
 
     assert_equal :super_admin, response[:template]
     assert_match(/created successfully/, response[:locals][:success])
@@ -280,7 +274,7 @@ class TestSuperAdminController < Minitest::Test
   def test_create_api_key_missing_name
     params = { name: '' }
 
-    response = SuperAdminController.create_api_key(params, {})
+    response = SuperAdminController.create_api_key(params)
 
     assert_equal :super_admin, response[:template]
     assert_equal 'API key name is required', response[:locals][:error]
@@ -291,14 +285,14 @@ class TestSuperAdminController < Minitest::Test
     result = ApiKey.generate('Test Key')
     api_key = result[:api_key]
 
-    response = SuperAdminController.delete_api_key({ id: api_key.id }, {})
+    response = SuperAdminController.delete_api_key({ id: api_key.id })
 
     assert_match(/deleted successfully/, response[:locals][:success])
     assert_equal 0, ApiKey.count
   end
 
   def test_delete_api_key_not_found
-    response = SuperAdminController.delete_api_key({ id: 9999 }, {})
+    response = SuperAdminController.delete_api_key({ id: 9999 })
 
     assert_equal 'API key not found', response[:locals][:error]
   end
@@ -307,7 +301,7 @@ class TestSuperAdminController < Minitest::Test
     ApiKey.generate('Test Key 1')
     ApiKey.generate('Test Key 2')
 
-    response = SuperAdminController.index({})
+    response = SuperAdminController.index
 
     assert_equal :super_admin, response[:template]
     assert_equal 2, response[:locals][:api_keys].count
