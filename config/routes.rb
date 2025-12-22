@@ -18,13 +18,21 @@ def render_controller(response)
     response[:locals]&.each do |key, value|
       instance_variable_set("@#{key}", value)
     end
-    erb response[:template]
+    erb response[:template], layout: :layout
   end
 end
 
 # Home - Landing Page
 get '/' do
-  erb :index
+  # Check if organization is logged in
+  if session[:organization_id]
+    @current_organization = Organization[session[:organization_id]]
+    @show_admin_nav = true
+    @logout_path = '/admin/logout'
+  elsif session[:super_admin]
+    @show_super_admin_nav = true
+  end
+  erb :index, layout: :layout
 end
 
 # Verify Page
@@ -38,7 +46,8 @@ end
 
 # Super Admin Login
 get '/super-admin/login' do
-  erb :super_admin_login
+  @title = 'Super Admin Login - Roaster'
+  erb :super_admin_login, layout: :layout
 end
 
 post '/super-admin/login' do
@@ -46,11 +55,18 @@ post '/super-admin/login' do
     redirect '/super-admin'
   else
     @error = 'Invalid username or password'
-    erb :super_admin_login
+    @title = 'Super Admin Login - Roaster'
+    erb :super_admin_login, layout: :layout
   end
 end
 
 get '/super-admin/logout' do
+  logout
+  redirect '/'
+end
+
+# Unified logout for both admin and super admin
+get '/logout' do
   logout
   redirect '/'
 end
@@ -83,7 +99,8 @@ end
 
 # Organization Admin Login
 get '/admin/login' do
-  erb :admin_login
+  @title = 'Organization Login - Roaster'
+  erb :admin_login, layout: :layout
 end
 
 post '/admin/login' do
@@ -91,7 +108,8 @@ post '/admin/login' do
     redirect '/admin'
   else
     @error = 'Invalid username or password'
-    erb :admin_login
+    @title = 'Organization Login - Roaster'
+    erb :admin_login, layout: :layout
   end
 end
 

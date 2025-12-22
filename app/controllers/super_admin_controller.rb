@@ -2,6 +2,8 @@
 class SuperAdminController
   def self.index(response)
     response[:organizations] = Organization.order(:name).all
+    response[:title] = 'Roaster - Super Admin'
+    response[:show_super_admin_nav] = true
     { template: :super_admin, locals: response }
   end
 
@@ -11,10 +13,14 @@ class SuperAdminController
 
     if org
       response[:organization] = org
+      response[:title] = 'Edit Organization - Roaster'
+      response[:show_super_admin_nav] = true
       { template: :edit_organization, locals: response }
     else
       response[:error] = 'Organization not found'
       response[:organizations] = Organization.order(:name).all
+      response[:title] = 'Roaster - Super Admin'
+      response[:show_super_admin_nav] = true
       { template: :super_admin, locals: response }
     end
   end
@@ -132,6 +138,8 @@ class SuperAdminController
 
   def self.render_super_admin_response(response)
     response[:organizations] = Organization.order(:name).all
+    response[:title] = 'Roaster - Super Admin'
+    response[:show_super_admin_nav] = true
     { template: :super_admin, locals: response }
   end
   private_class_method :render_super_admin_response

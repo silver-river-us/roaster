@@ -1,34 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roaster - Privacy-First Email Verification</title>
-  <link rel="icon" type="image/webp" href="/roaster-logo.webp">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
-</head>
-<body class="bg-gray-50">
-  <!-- Header -->
-  <nav class="bg-gray-800 border-b border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center">
-          <a href="/" class="flex items-center">
-            <img src="/roaster-logo.webp" alt="Roaster Logo" class="h-10 w-10 mr-3">
-            <h1 class="text-2xl font-bold text-white">Roaster</h1>
-          </a>
-          <span class="ml-3 text-sm text-gray-300">Privacy-First Email Verification</span>
-        </div>
-        <div class="flex gap-4">
-          <a href="/admin" class="text-sm text-orange-400 hover:text-orange-300 font-medium">Organization Login</a>
-          <a href="/super-admin" class="text-sm text-gray-300 hover:text-white font-medium">Admin</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
+<!-- Hero Section -->
   <div class="relative bg-gradient-to-br from-orange-500 via-red-500 to-red-600 overflow-hidden">
     <div class="max-w-7xl mx-auto">
       <div class="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:pb-28 xl:pb-32">
@@ -74,153 +44,60 @@
     </div>
   </div>
 
-  <!-- Features Grid -->
-  <div class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl font-extrabold text-gray-900">Why Choose Roaster?</h2>
-        <p class="mt-4 text-lg text-gray-600">Built with privacy and security at its core</p>
-      </div>
-      <div class="grid md:grid-cols-3 gap-8">
-        <!-- Feature 1 -->
-        <div class="text-center">
-          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-red-500 text-white mx-auto">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-          </div>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Privacy First</h3>
-          <p class="mt-2 text-base text-gray-500">
-            Emails are cryptographically hashed before storage. Original addresses are never saved.
-          </p>
-        </div>
-
-        <!-- Feature 2 -->
-        <div class="text-center">
-          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white mx-auto">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Lightning Fast</h3>
-          <p class="mt-2 text-base text-gray-500">
-            Instant verification with optimized hash lookups. No delays, no waiting.
-          </p>
-        </div>
-
-        <!-- Feature 3 -->
-        <div class="text-center">
-          <div class="flex items-center justify-center h-12 w-12 rounded-md bg-yellow-500 text-white mx-auto">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-            </svg>
-          </div>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Multi-Organization</h3>
-          <p class="mt-2 text-base text-gray-500">
-            Support multiple organizations with completely isolated data and access controls.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- How It Works Section -->
-  <div id="how-it-works" class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-        <!-- Left Column - How It Works -->
-        <div>
-          <h2 class="text-3xl font-extrabold text-gray-900 mb-8">How It Works</h2>
-          <div class="bg-white rounded-lg shadow-lg p-8">
-            <!-- Flowchart -->
-            <ol class="relative border-l-2 border-orange-500 ml-3 space-y-8">
-              <!-- Step 1 -->
-              <li class="ml-6">
-                <span class="absolute flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -left-4 ring-4 ring-white">
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                  </svg>
-                </span>
-                <h4 class="text-lg font-semibold text-gray-900">Organization Uploads Email List</h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  Organizations upload CSV files containing verified email addresses.
-                </p>
-              </li>
-
-              <!-- Step 2 -->
-              <li class="ml-6">
-                <span class="absolute flex items-center justify-center w-8 h-8 bg-orange-500 rounded-full -left-4 ring-4 ring-white">
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"></path>
-                  </svg>
-                </span>
-                <h4 class="text-lg font-semibold text-gray-900">Emails Are Hashed</h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  Each email is cryptographically hashed (SHA-256) before storage. The original email is never stored.
-                </p>
-              </li>
-
-              <!-- Step 3 -->
-              <li class="ml-6">
-                <span class="absolute flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full -left-4 ring-4 ring-white">
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                  </svg>
-                </span>
-                <h4 class="text-lg font-semibold text-gray-900">Users Verify Themselves</h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  Users enter their email to check if it's on the verified list. The email is hashed and compared.
-                </p>
-              </li>
-
-              <!-- Step 4 -->
-              <li class="ml-6">
-                <span class="absolute flex items-center justify-center w-8 h-8 bg-red-600 rounded-full -left-4 ring-4 ring-white">
-                  <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                  </svg>
-                </span>
-                <h4 class="text-lg font-semibold text-gray-900">Privacy Protected</h4>
-                <p class="text-sm text-gray-600 mt-1">
-                  No personal data is exposed. Only hash comparisons are performed.
-                </p>
-              </li>
-            </ol>
-          </div>
-
-          <!-- Features -->
-          <div class="mt-8 bg-white rounded-lg shadow-lg p-8">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Key Features</h3>
-            <ul class="space-y-3">
-              <li class="flex items-start">
-                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-sm text-gray-700"><strong>Privacy-First:</strong> Emails are hashed, never stored in plaintext</span>
-              </li>
-              <li class="flex items-start">
-                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-sm text-gray-700"><strong>Multi-Organization:</strong> Support for multiple organizations with isolated data</span>
-              </li>
-              <li class="flex items-start">
-                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-sm text-gray-700"><strong>CSV Import:</strong> Easy bulk upload via CSV files</span>
-              </li>
-              <li class="flex items-start">
-                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                <span class="text-sm text-gray-700"><strong>Instant Verification:</strong> Fast lookups with immediate results</span>
-              </li>
-            </ul>
-          </div>
-        </div>
+  <div id="how-it-works" class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-extrabold text-gray-900">How It Works</h2>
+        <p class="mt-4 text-lg text-gray-600">Privacy-first email verification in four simple steps</p>
       </div>
+
+      <ol class="relative border-s border-gray-200">
+        <!-- Step 1 -->
+        <li class="mb-10 ms-6">
+          <span class="absolute flex items-center justify-center w-8 h-8 bg-red-500 rounded-full -start-4 ring-4 ring-white">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+            </svg>
+          </span>
+          <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">Organization Uploads Email List</h3>
+          <p class="mb-4 text-base font-normal text-gray-500">Organizations upload CSV files containing verified email addresses through the admin panel.</p>
+        </li>
+
+        <!-- Step 2 -->
+        <li class="mb-10 ms-6">
+          <span class="absolute flex items-center justify-center w-8 h-8 bg-orange-500 rounded-full -start-4 ring-4 ring-white">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </span>
+          <h3 class="mb-1 text-lg font-semibold text-gray-900">Emails Are Hashed</h3>
+          <p class="text-base font-normal text-gray-500">Each email is cryptographically hashed using SHA-256 before storage. The original email address is never stored in the database.</p>
+        </li>
+
+        <!-- Step 3 -->
+        <li class="mb-10 ms-6">
+          <span class="absolute flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full -start-4 ring-4 ring-white">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </span>
+          <h3 class="mb-1 text-lg font-semibold text-gray-900">Users Verify Themselves</h3>
+          <p class="text-base font-normal text-gray-500">Users enter their email address to check if it's on the verified list. The email is hashed client-side and compared against stored hashes.</p>
+        </li>
+
+        <!-- Step 4 -->
+        <li class="ms-6">
+          <span class="absolute flex items-center justify-center w-8 h-8 bg-red-600 rounded-full -start-4 ring-4 ring-white">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+          </span>
+          <h3 class="mb-1 text-lg font-semibold text-gray-900">Privacy Protected</h3>
+          <p class="text-base font-normal text-gray-500">No personal data is exposed during the verification process. Only secure hash comparisons are performed, ensuring complete privacy.</p>
+        </li>
+      </ol>
     </div>
   </div>
 
@@ -278,7 +155,3 @@
       </div>
     </div>
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
-</body>
-</html>

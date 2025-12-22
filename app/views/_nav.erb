@@ -1,0 +1,20 @@
+<nav class="bg-gray-800 border-b border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          <img src="/roaster-logo.webp" alt="Roaster Logo" class="h-10 w-10 mr-3">
+          <h1 class="text-2xl font-bold text-white">Roaster</h1>
+          <span class="ml-3 text-sm text-gray-300">Privacy-First Email Verification</span>
+        </a>
+      </div>
+      <div class="flex gap-4">
+        <a href="/admin" class="text-sm text-orange-400 hover:text-orange-300 font-medium">Organization Login</a>
+        <a href="/super-admin" class="text-sm text-gray-300 hover:text-white font-medium">Admin</a>
+        <% if @show_admin_nav || @show_super_admin_nav %>
+          <a href="/logout" class="text-sm text-red-400 hover:text-red-300 font-medium">Sign Out</a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

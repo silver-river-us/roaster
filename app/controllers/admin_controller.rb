@@ -4,6 +4,9 @@ class AdminController
     response[:organization] = current_organization
     response[:success] ||= nil
     response[:error] ||= nil
+    response[:title] = 'Roaster - Admin'
+    response[:show_admin_nav] = true
+    response[:logout_path] = '/admin/logout'
     { template: :admin, locals: response }
   end
 

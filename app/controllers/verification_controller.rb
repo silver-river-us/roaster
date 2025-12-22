@@ -12,6 +12,7 @@ class VerificationController
     response[:error] ||= nil
     response[:email] ||= nil
     response[:organization_username] ||= nil
+    response[:title] = 'Verify Email - Roaster'
     { template: :verify, locals: response }
   end
 
@@ -25,6 +26,7 @@ class VerificationController
       check_email_verification(email, org_username, response)
     end
 
+    response[:title] = 'Verify Email - Roaster'
     { template: :verify, locals: response }
   end
 
