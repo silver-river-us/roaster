@@ -1,5 +1,6 @@
 <div align="center">
-  <img src="public/roaster-logo.webp" alt="Roaster Logo" width="400"/>
+  <img src="public/roaster-logo.webp" alt="Roaster Logo" width="300"/>
+  <h1>Roaster</h1>
 
   **Privacy-first email verification for organizations that care about data protection.**
 
