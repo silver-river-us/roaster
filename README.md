@@ -1,6 +1,10 @@
 <div align="center">
-  <img src="public/roaster-logo.webp" alt="Roaster Logo" width="300"/>
-  <h1>Roaster</h1>
+  <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+    <img src="public/roaster-logo.webp" alt="Roaster Logo" width="300"/>
+    <h1 style="margin: 0;">Roaster</h1>
+  </div>
+
+  <br/>
 
   **Privacy-first email verification for organizations that care about data protection.**
 
