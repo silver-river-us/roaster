@@ -1,6 +1,6 @@
 <div align="center">
   <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-    <img src="public/roaster-logo.webp" alt="Roaster Logo" width="300"/>
+    <img src="public/roaster-logo.webp" alt="Roaster Logo" width="150"/>
     <h1 style="margin: 0;">Roaster</h1>
   </div>
 
