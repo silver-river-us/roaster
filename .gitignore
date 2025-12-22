@@ -1,3 +1,5 @@
 .bundle/
 vendor/bundle/
 .env
+db/*.db
+db/*.db-*
