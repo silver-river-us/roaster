@@ -13,6 +13,11 @@ class VerifiedEmail < Sequel::Model
     where(email_hash: email_hash, organization_name: organization_name).any?
   end
 
+  def self.find_by_email(email)
+    email_hash = hash_email(email)
+    first(email_hash: email_hash)
+  end
+
   def self.import_from_csv(csv_path, organization_name = nil)
     imported = 0
     duplicates = 0

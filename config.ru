@@ -5,6 +5,9 @@ require 'rack/session'
 # Set views directory
 set :views, File.expand_path('app/views', __dir__)
 
+# Set public directory for static files
+set :public_folder, File.expand_path('public', __dir__)
+
 # Enable sessions
 use Rack::Session::Cookie,
     key: 'roaster.session',

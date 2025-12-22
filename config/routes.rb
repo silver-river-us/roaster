@@ -55,24 +55,26 @@ post '/api/v1/verify' do
   # Authenticate API key
   authenticated_key = ApiKey.authenticate(api_key)
 
-  unless authenticated_key
-    halt 401, { error: 'Invalid or missing API key' }.to_json
-  end
-
-  # Get email from request body
-  request.body.rewind
-  body = JSON.parse(request.body.read) rescue {}
+  # Get email and organization_username from request body
+  body_content = request.body.read
+  request.body.rewind if request.body.respond_to?(:rewind)
+  body = JSON.parse(body_content) rescue {}
   email = body['email']
+  organization_username = body['organization_username']
 
-  unless email
-    halt 400, { error: 'Email is required' }.to_json
+  # Don't leak information about API key or parameter validity
+  # Return generic error for any authentication or validation failure
+  unless authenticated_key && email && !email.empty? && organization_username && !organization_username.empty?
+    halt 400, { error: 'Bad request' }.to_json
   end
 
-  # Check if email is verified
-  verified_email = VerifiedEmail.find_by_email(email)
+  # Find organization
+  org = Organization.find(username: organization_username)
 
-  if verified_email
-    { verified: true, organization: verified_email.organization_name }.to_json
+  # Check if email is verified for this organization
+  # Don't leak whether organization exists - return generic response
+  if org && VerifiedEmail.verified?(email, org.name)
+    { verified: true, organization: org.name }.to_json
   else
     { verified: false }.to_json
   end

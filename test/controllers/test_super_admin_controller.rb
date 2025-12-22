@@ -263,5 +263,52 @@ class TestSuperAdminController < Minitest::Test
       assert_match(/Simulated delete error/, response[:locals][:error])
     end
   end
+
+  def test_create_api_key_success
+    params = { name: 'Test API Key' }
+
+    response = SuperAdminController.create_api_key(params, {})
+
+    assert_equal :super_admin, response[:template]
+    assert_match(/created successfully/, response[:locals][:success])
+    assert response[:locals][:new_api_key]
+    assert_equal 1, ApiKey.count
+  end
+
+  def test_create_api_key_missing_name
+    params = { name: '' }
+
+    response = SuperAdminController.create_api_key(params, {})
+
+    assert_equal :super_admin, response[:template]
+    assert_equal 'API key name is required', response[:locals][:error]
+    assert_equal 0, ApiKey.count
+  end
+
+  def test_delete_api_key_success
+    result = ApiKey.generate('Test Key')
+    api_key = result[:api_key]
+
+    response = SuperAdminController.delete_api_key({ id: api_key.id }, {})
+
+    assert_match(/deleted successfully/, response[:locals][:success])
+    assert_equal 0, ApiKey.count
+  end
+
+  def test_delete_api_key_not_found
+    response = SuperAdminController.delete_api_key({ id: 9999 }, {})
+
+    assert_equal 'API key not found', response[:locals][:error]
+  end
+
+  def test_index_includes_api_keys
+    ApiKey.generate('Test Key 1')
+    ApiKey.generate('Test Key 2')
+
+    response = SuperAdminController.index({})
+
+    assert_equal :super_admin, response[:template]
+    assert_equal 2, response[:locals][:api_keys].count
+  end
 end
 # rubocop:enable Metrics/ClassLength

@@ -63,4 +63,24 @@ class TestVerifiedEmail < Minitest::Test
 
     File.delete(csv_path)
   end
+
+  def test_find_by_email_returns_verified_email
+    email = 'test@example.com'
+    created = VerifiedEmail.create(
+      email_hash: VerifiedEmail.hash_email(email),
+      organization_name: 'Test Org'
+    )
+
+    found = VerifiedEmail.find_by_email(email)
+
+    assert found
+    assert_equal created.id, found.id
+    assert_equal 'Test Org', found.organization_name
+  end
+
+  def test_find_by_email_returns_nil_when_not_found
+    found = VerifiedEmail.find_by_email('notfound@example.com')
+
+    assert_nil found
+  end
 end

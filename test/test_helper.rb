@@ -33,6 +33,7 @@ Sequel::Model.plugin :timestamps, update_on_create: true
 # Load models
 require_relative '../app/models/organization'
 require_relative '../app/models/verified_email'
+require_relative '../app/models/api_key'
 
 # Run migrations for test database
 Sequel.extension :migration
@@ -43,5 +44,6 @@ class Minitest::Test
   def setup
     DB[:verified_emails].delete
     DB[:organizations].delete
+    DB[:api_keys].delete
   end
 end
