@@ -19,9 +19,7 @@ class AdminController
     unless params[:csv_file] && params[:csv_file][:tempfile]
       response[:error] = 'Please select a CSV file'
       response[:success] = nil
-      response[:stats] = stats(current_organization)
-      response[:organization] = current_organization
-      return { template: :admin, locals: response }
+      return render_admin_response(current_organization, response)
     end
 
     # Import CSV with organization name
@@ -29,10 +27,8 @@ class AdminController
 
     begin
       result = VerifiedEmail.import_from_csv(csv_path, current_organization.name)
-
       success_message = "Successfully imported #{result[:imported]} emails"
       success_message += " (#{result[:duplicates]} duplicates skipped)" if result[:duplicates].positive?
-
       response[:success] = success_message
       response[:error] = nil
     rescue StandardError => e
@@ -40,10 +36,15 @@ class AdminController
       response[:success] = nil
     end
 
+    render_admin_response(current_organization, response)
+  end
+
+  def self.render_admin_response(current_organization, response)
     response[:stats] = stats(current_organization)
     response[:organization] = current_organization
     { template: :admin, locals: response }
   end
+  private_class_method :render_admin_response
 
   def self.stats(current_organization)
     {

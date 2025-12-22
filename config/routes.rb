@@ -37,7 +37,7 @@ get '/super-admin/login' do
 end
 
 post '/super-admin/login' do
-  if authenticate_super_admin(params[:username], params[:password])
+  if login_super_admin(params[:username], params[:password])
     redirect '/super-admin'
   else
     @error = 'Invalid username or password'
@@ -82,7 +82,7 @@ get '/admin/login' do
 end
 
 post '/admin/login' do
-  if authenticate_organization(params[:username], params[:password])
+  if login_organization(params[:username], params[:password])
     redirect '/admin'
   else
     @error = 'Invalid username or password'

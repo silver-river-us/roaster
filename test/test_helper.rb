@@ -11,6 +11,7 @@ DB = Sequel.connect('sqlite://db/roaster_test.db')
 Sequel::Model.plugin :timestamps, update_on_create: true
 
 # Load models
+require_relative '../models/organization'
 require_relative '../models/verified_email'
 
 # Run migrations for test database
@@ -21,5 +22,6 @@ Sequel::Migrator.run(DB, 'db/migrate')
 class Minitest::Test
   def setup
     DB[:verified_emails].delete
+    DB[:organizations].delete
   end
 end

@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ClassLength
 class SuperAdminController
   def self.index(response)
     response[:organizations] = Organization.order(:name).all
@@ -23,33 +24,36 @@ class SuperAdminController
     username = params[:username]&.strip
     password = params[:password]&.strip
 
-    # Validate
-    if name.nil? || name.empty?
-      response[:error] = 'Organization name is required'
-    elsif username.nil? || username.empty?
-      response[:error] = 'Username is required'
-    elsif password.nil? || password.empty?
-      response[:error] = 'Password is required'
+    validation_error = validate_organization_params(name, username, password)
+    if validation_error
+      response[:error] = validation_error
     else
-      begin
-        org = Organization.new(
-          name: name,
-          username: username
-        )
-        org.password = password
-        org.save
-
-        response[:success] = "Organization '#{name}' created successfully"
-      rescue Sequel::UniqueConstraintViolation
-        response[:error] = 'Username or organization name already exists'
-      rescue StandardError => e
-        response[:error] = "Error creating organization: #{e.message}"
-      end
+      create_org_record(name, username, password, response)
     end
 
-    response[:organizations] = Organization.order(:name).all
-    { template: :super_admin, locals: response }
+    render_super_admin_response(response)
   end
+
+  def self.validate_organization_params(name, username, password)
+    return 'Organization name is required' if name.nil? || name.empty?
+    return 'Username is required' if username.nil? || username.empty?
+    return 'Password is required' if password.nil? || password.empty?
+
+    nil
+  end
+  private_class_method :validate_organization_params
+
+  def self.create_org_record(name, username, password, response)
+    org = Organization.new(name: name, username: username)
+    org.password = password
+    org.save
+    response[:success] = "Organization '#{name}' created successfully"
+  rescue Sequel::UniqueConstraintViolation
+    response[:error] = 'Username or organization name already exists'
+  rescue StandardError => e
+    response[:error] = "Error creating organization: #{e.message}"
+  end
+  private_class_method :create_org_record
 
   def self.update_organization(params, response)
     org_id = params[:id]
@@ -57,36 +61,42 @@ class SuperAdminController
     username = params[:username]&.strip
     password = params[:password]&.strip
 
-    begin
-      org = Organization[org_id]
-      unless org
-        response[:error] = 'Organization not found'
-        response[:organizations] = Organization.order(:name).all
-        return { template: :super_admin, locals: response }
-      end
-
-      # Validate
-      if name.nil? || name.empty?
-        response[:error] = 'Organization name is required'
-      elsif username.nil? || username.empty?
-        response[:error] = 'Username is required'
-      else
-        org.name = name
-        org.username = username
-        org.password = password if password && !password.empty?
-        org.save
-
-        response[:success] = "Organization '#{name}' updated successfully"
-      end
-    rescue Sequel::UniqueConstraintViolation
-      response[:error] = 'Username or organization name already exists'
-    rescue StandardError => e
-      response[:error] = "Error updating organization: #{e.message}"
+    org = Organization[org_id]
+    unless org
+      response[:error] = 'Organization not found'
+      return render_super_admin_response(response)
     end
 
-    response[:organizations] = Organization.order(:name).all
-    { template: :super_admin, locals: response }
+    validation_error = validate_update_params(name, username)
+    if validation_error
+      response[:error] = validation_error
+    else
+      update_org_record(org, name, username, password, response)
+    end
+
+    render_super_admin_response(response)
   end
+
+  def self.validate_update_params(name, username)
+    return 'Organization name is required' if name.nil? || name.empty?
+    return 'Username is required' if username.nil? || username.empty?
+
+    nil
+  end
+  private_class_method :validate_update_params
+
+  def self.update_org_record(org, name, username, password, response)
+    org.name = name
+    org.username = username
+    org.password = password if password && !password.empty?
+    org.save
+    response[:success] = "Organization '#{name}' updated successfully"
+  rescue Sequel::UniqueConstraintViolation
+    response[:error] = 'Username or organization name already exists'
+  rescue StandardError => e
+    response[:error] = "Error updating organization: #{e.message}"
+  end
+  private_class_method :update_org_record
 
   def self.delete_organization(params, response)
     org_id = params[:id]
@@ -103,8 +113,7 @@ class SuperAdminController
       response[:error] = "Error deleting organization: #{e.message}"
     end
 
-    response[:organizations] = Organization.order(:name).all
-    { template: :super_admin, locals: response }
+    render_super_admin_response(response)
   end
 
   def self.stats
@@ -120,4 +129,11 @@ class SuperAdminController
         .all
     }
   end
+
+  def self.render_super_admin_response(response)
+    response[:organizations] = Organization.order(:name).all
+    { template: :super_admin, locals: response }
+  end
+  private_class_method :render_super_admin_response
 end
+# rubocop:enable Metrics/ClassLength

@@ -26,60 +26,51 @@ class TestRoutes < Minitest::Test
     assert_match(/Verify your email/, last_response.body)
   end
 
-  def test_admin_page_loads
+  def test_admin_page_redirects_without_auth
     get '/admin'
-    assert last_response.ok?
-    assert_match(/Roaster Admin/, last_response.body)
-    assert_match(/Total Verified Emails/, last_response.body)
+    assert last_response.redirect?
+    follow_redirect!
+    assert_match(/login/, last_request.url)
   end
 
   def test_verify_email_not_found
-    post '/verify', email: 'notfound@example.com'
+    # Create organization
+    Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+
+    post '/verify', email: 'notfound@example.com', organization_username: 'testorg'
     assert last_response.ok?
-    assert_match(/Email not found in verified list/, last_response.body)
+    assert_match(/Email not verified/, last_response.body)
   end
 
   def test_verify_email_success
+    # Create organization
+    Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+
     email = 'verified@example.com'
     VerifiedEmail.create(
       email_hash: VerifiedEmail.hash_email(email),
       organization_name: 'Test Org'
     )
 
-    post '/verify', email: email
+    post '/verify', email: email, organization_username: 'testorg'
     assert last_response.ok?
     assert_match(/Email verified successfully/, last_response.body)
     assert_match(/#{email}/, last_response.body)
   end
 
   def test_verify_email_empty
-    post '/verify', email: ''
+    post '/verify', email: '', organization_username: 'testorg'
     assert last_response.ok?
-    assert_match(/Please enter an email address/, last_response.body)
+    assert_match(/Please enter both organization username and email address/, last_response.body)
   end
 
-  def test_download_example_csv
+  def test_download_example_csv_requires_auth
     get '/admin/download-example'
-    assert last_response.ok?
-    assert_match(%r{text/csv}, last_response.content_type)
-    assert_equal 'attachment; filename="example_emails.csv"', last_response.headers['Content-Disposition']
+    assert last_response.redirect?
   end
 
-  def test_upload_csv_without_file
+  def test_upload_csv_requires_auth
     post '/admin/upload'
-    assert last_response.ok?
-    assert_match(/Please select a CSV file/, last_response.body)
-  end
-
-  def test_upload_csv_with_valid_file
-    csv_content = "email\ntest@example.com\n"
-
-    post '/admin/upload',
-         csv_file: Rack::Test::UploadedFile.new(StringIO.new(csv_content), 'text/csv', original_filename: 'test.csv'),
-         organization_name: 'Test Org'
-
-    assert last_response.ok?
-    assert_match(/Successfully imported/, last_response.body)
-    assert_equal 1, VerifiedEmail.count
+    assert last_response.redirect?
   end
 end

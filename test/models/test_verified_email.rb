@@ -19,11 +19,11 @@ class TestVerifiedEmail < Minitest::Test
       organization_name: 'Test Org'
     )
 
-    assert VerifiedEmail.verified?(email), 'Should return true for verified email'
+    assert VerifiedEmail.verified?(email, 'Test Org'), 'Should return true for verified email'
   end
 
   def test_verified_when_email_does_not_exist
-    refute VerifiedEmail.verified?('notfound@example.com'), 'Should return false for unverified email'
+    refute VerifiedEmail.verified?('notfound@example.com', 'Test Org'), 'Should return false for unverified email'
   end
 
   def test_import_from_csv

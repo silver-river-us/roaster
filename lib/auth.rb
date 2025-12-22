@@ -1,14 +1,12 @@
 module Auth
   def require_super_admin
-    unless session[:super_admin]
-      redirect '/super-admin/login'
-    end
+    return if session[:super_admin]
+
+    redirect '/super-admin/login'
   end
 
   def require_organization
-    unless session[:organization_id]
-      redirect '/admin/login'
-    end
+    redirect '/admin/login' unless session[:organization_id]
 
     @current_organization = Organization[session[:organization_id]]
     unless @current_organization
@@ -19,8 +17,13 @@ module Auth
     @current_organization
   end
 
-  def authenticate_super_admin(username, password)
-    if username == ENV['SUPER_ADMIN_USERNAME'] && password == ENV['SUPER_ADMIN_PASSWORD']
+  def super_admin_authenticated?(username, password)
+    username == ENV['SUPER_ADMIN_USERNAME'] && password == ENV['SUPER_ADMIN_PASSWORD']
+  end
+
+  # rubocop:disable Naming/PredicateMethod
+  def login_super_admin(username, password)
+    if super_admin_authenticated?(username, password)
       session[:super_admin] = true
       true
     else
@@ -28,7 +31,7 @@ module Auth
     end
   end
 
-  def authenticate_organization(username, password)
+  def login_organization(username, password)
     org = Organization.authenticate(username, password)
     if org
       session[:organization_id] = org.id
@@ -37,6 +40,7 @@ module Auth
       false
     end
   end
+  # rubocop:enable Naming/PredicateMethod
 
   def logout
     session.clear

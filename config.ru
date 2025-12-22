@@ -4,11 +4,11 @@ require 'rack/session'
 
 # Enable sessions
 use Rack::Session::Cookie,
-  key: 'roaster.session',
-  secret: ENV.fetch('SESSION_SECRET', 'change_me_in_production_please_' + SecureRandom.hex(32)),
-  expire_after: 86400, # 24 hours
-  same_site: :lax,
-  httponly: true
+    key: 'roaster.session',
+    secret: ENV.fetch('SESSION_SECRET', "change_me_in_production_please_#{SecureRandom.hex(32)}"),
+    expire_after: 86_400, # 24 hours
+    same_site: :lax,
+    httponly: true
 
 # Database
 require_relative 'config/database'
