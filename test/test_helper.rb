@@ -15,6 +15,9 @@ SimpleCov.start do
   # Configure console formatter to show all files
   SimpleCov::Formatter::Console.table_options = { max_width: 200 }
   SimpleCov::Formatter::Console.show_covered = true
+
+  # Require 100% coverage - fail CI if coverage drops below 100%
+  minimum_coverage line: 100
 end
 
 require 'minitest/autorun'

@@ -207,5 +207,61 @@ class TestSuperAdminController < Minitest::Test
     assert_equal 2, stats[:total_organizations]
     assert_equal 2, stats[:organizations_breakdown].count
   end
+
+  def test_create_organization_handles_save_errors
+    params = { name: 'Test Org', username: 'testorg', password: 'password123' }
+
+    # Stub the Organization model to raise an error during save
+    Organization.stub :new, ->(*_args) do
+      org = Object.new
+      def org.password=(_val); end
+      def org.save
+        raise StandardError, 'Simulated database error'
+      end
+      org
+    end do
+      response = SuperAdminController.create_organization(params, {})
+      assert_match(/Error creating organization/, response[:locals][:error])
+      assert_match(/Simulated database error/, response[:locals][:error])
+    end
+  end
+
+  def test_update_organization_handles_save_errors
+    org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+    params = { id: org.id, name: 'Updated Name', username: 'updateduser', password: '' }
+
+    # Stub Organization[] to return a mock that fails on save
+    Organization.stub :[], ->(_id) do
+      mock_org = Object.new
+      def mock_org.name=(_val); end
+      def mock_org.username=(_val); end
+      def mock_org.password=(_val); end
+      def mock_org.save
+        raise StandardError, 'Simulated update error'
+      end
+      mock_org
+    end do
+      response = SuperAdminController.update_organization(params, {})
+      assert_match(/Error updating organization/, response[:locals][:error])
+      assert_match(/Simulated update error/, response[:locals][:error])
+    end
+  end
+
+  def test_delete_organization_handles_delete_errors
+    org = Organization.create_with_password(name: 'Test Org', username: 'testorg', password: 'password123')
+
+    # Stub Organization[] to return a mock that fails on delete
+    Organization.stub :[], ->(_id) do
+      mock_org = Object.new
+      def mock_org.delete
+        raise StandardError, 'Simulated delete error'
+      end
+      mock_org
+    end do
+      response = SuperAdminController.delete_organization({ id: org.id }, {})
+      assert_match(/Error deleting organization/, response[:locals][:error])
+      assert_match(/Simulated delete error/, response[:locals][:error])
+    end
+  end
 end
 # rubocop:enable Metrics/ClassLength

@@ -22,8 +22,10 @@ jobs:
     - name: Run database migrations
       run: bundle exec rake db:migrate_test
 
-    - name: Run tests
+    - name: Run tests with coverage check
       run: bundle exec rake test
+      # SimpleCov is configured with minimum_coverage 100 in test_helper.rb
+      # Tests will fail if coverage drops below 100%
 
   rubocop:
     runs-on: ubuntu-latest
