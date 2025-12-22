@@ -7,6 +7,14 @@ class VerificationController
     { template: :index, locals: response }
   end
 
+  def self.verify_page(response)
+    response[:success] ||= nil
+    response[:error] ||= nil
+    response[:email] ||= nil
+    response[:organization_username] ||= nil
+    { template: :verify, locals: response }
+  end
+
   def self.verify(params, response)
     email = params[:email]&.strip
     org_username = params[:organization_username]&.strip
@@ -17,7 +25,7 @@ class VerificationController
       check_email_verification(email, org_username, response)
     end
 
-    { template: :index, locals: response }
+    { template: :verify, locals: response }
   end
 
   def self.inputs_invalid?(email, org_username)

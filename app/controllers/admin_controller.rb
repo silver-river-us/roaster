@@ -10,7 +10,7 @@ class AdminController
   def self.download_example(response)
     response[:content_type] = 'text/csv'
     response[:attachment] = 'example_emails.csv'
-    response[:body] = File.read('assets/example_emails.csv')
+    response[:body] = File.read('public/example_emails.csv')
     response
   end
 

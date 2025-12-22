@@ -23,7 +23,13 @@ class TestRoutes < Minitest::Test
     get '/'
     assert last_response.ok?
     assert_match(/Roaster/, last_response.body)
-    assert_match(/Verify your email/, last_response.body)
+    assert_match(/Privacy-First/, last_response.body)
+  end
+
+  def test_verify_page_loads
+    get '/verify'
+    assert last_response.ok?
+    assert_match(/Verify Your Email/, last_response.body)
   end
 
   def test_admin_page_redirects_without_auth

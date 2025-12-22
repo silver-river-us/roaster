@@ -7,19 +7,21 @@ Email verification service with privacy-preserving hashed storage.
 ```
 roaster/
 ├── config.ru                        # Application entry point
-├── assets/
+├── public/
 │   └── example_emails.csv           # Example CSV template
 ├── config/
 │   ├── database.rb                  # Database configuration
 │   └── routes.rb                    # Route definitions
-├── controllers/
-│   ├── admin_controller.rb          # Admin business logic
-│   └── verification_controller.rb   # Verification business logic
-├── models/
-│   └── verified_email.rb           # Email verification model
-├── views/
-│   ├── index.erb                    # Verification page
-│   └── admin.erb                    # Admin dashboard
+├── app/
+│   ├── controllers/
+│   │   ├── admin_controller.rb      # Admin business logic
+│   │   └── verification_controller.rb # Verification business logic
+│   ├── models/
+│   │   └── verified_email.rb       # Email verification model
+│   └── views/
+│       ├── index.erb                # Landing page
+│       ├── verify.erb               # Verification page
+│       └── admin.erb                # Admin dashboard
 └── db/
     └── migrate/                     # Database migrations
 ```
@@ -39,7 +41,7 @@ rake db:import[path/to/emails.csv,OrganizationName]
 
 Example:
 ```bash
-rake db:import[assets/example_emails.csv,MFA]
+rake db:import[public/example_emails.csv,MFA]
 ```
 
 CSV format should have one column with header "email":

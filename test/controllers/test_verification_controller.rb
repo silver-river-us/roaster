@@ -15,7 +15,7 @@ class TestVerificationController < Minitest::Test
   def test_verify_with_empty_email
     response = VerificationController.verify({ email: '', organization_username: 'testorg' }, {})
 
-    assert_equal :index, response[:template]
+    assert_equal :verify, response[:template]
     assert_equal 'Please enter both organization username and email address', response[:locals][:error]
     assert_nil response[:locals][:success]
   end
@@ -23,7 +23,7 @@ class TestVerificationController < Minitest::Test
   def test_verify_with_nil_email
     response = VerificationController.verify({ organization_username: 'testorg' }, {})
 
-    assert_equal :index, response[:template]
+    assert_equal :verify, response[:template]
     assert_equal 'Please enter both organization username and email address', response[:locals][:error]
   end
 
@@ -39,7 +39,7 @@ class TestVerificationController < Minitest::Test
 
     response = VerificationController.verify({ email: email, organization_username: 'testorg' }, {})
 
-    assert_equal :index, response[:template]
+    assert_equal :verify, response[:template]
     assert_equal true, response[:locals][:success]
     assert_equal email, response[:locals][:email]
     assert_nil response[:locals][:error]
@@ -51,7 +51,7 @@ class TestVerificationController < Minitest::Test
 
     response = VerificationController.verify({ email: 'notfound@example.com', organization_username: 'testorg' }, {})
 
-    assert_equal :index, response[:template]
+    assert_equal :verify, response[:template]
     assert_equal 'Email not verified', response[:locals][:error]
     assert_nil response[:locals][:success]
   end

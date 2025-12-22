@@ -13,7 +13,7 @@
         <h1 class="text-4xl font-bold text-gray-900">
           Edit Organization
         </h1>
-        <a href="/super-admin" class="text-blue-600 hover:text-blue-700 font-medium">
+        <a href="/super-admin" class="text-orange-600 hover:text-orange-700 font-medium">
           ← Back to Organizations
         </a>
       </div>
@@ -54,7 +54,7 @@
               name="name"
               value="<%= @organization.name %>"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
 
@@ -68,7 +68,7 @@
               name="username"
               value="<%= @organization.username %>"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             />
           </div>
 
@@ -80,7 +80,7 @@
               type="password"
               id="password"
               name="password"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Leave blank to keep current password"
             />
             <p class="mt-1 text-sm text-gray-500">
@@ -91,7 +91,7 @@
           <div class="flex gap-4">
             <button
               type="submit"
-              class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+              class="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-2 px-4 rounded-lg transition"
             >
               Update Organization
             </button>

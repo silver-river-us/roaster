@@ -22,9 +22,14 @@ def render_controller(response)
   end
 end
 
-# Home
+# Home - Landing Page
 get '/' do
-  render_controller VerificationController.index({})
+  erb :index
+end
+
+# Verify Page
+get '/verify' do
+  render_controller VerificationController.verify_page({})
 end
 
 post '/verify' do
