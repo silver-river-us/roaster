@@ -1,10 +1,10 @@
   <div class="py-12 px-4" style="min-height: calc(100vh - 64px);">
     <div class="max-w-6xl mx-auto">
       <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
           Super Admin Panel
         </h1>
-        <p class="text-gray-600">
+        <p class="text-sm sm:text-base text-gray-600">
           Manage organizations and view system statistics
         </p>
       </div>
@@ -33,11 +33,11 @@
       <% end %>
 
       <!-- Create Organization Form -->
-      <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Create New Organization</h2>
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8 mb-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Create New Organization</h2>
 
         <form method="POST" action="/super-admin/organizations" class="space-y-6">
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                 Organization Name
@@ -90,30 +90,30 @@
       </div>
 
       <!-- Organizations List -->
-      <div class="bg-white rounded-lg shadow-lg p-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">Organizations</h2>
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Organizations</h2>
 
         <% if @organizations && @organizations.any? %>
-          <div class="overflow-x-auto">
-            <table class="w-full">
+          <div class="overflow-x-auto -mx-4 sm:mx-0">
+            <table class="w-full min-w-full">
               <thead>
                 <tr class="border-b border-gray-200">
-                  <th class="text-left py-3 px-4 font-semibold text-gray-700">Name</th>
-                  <th class="text-left py-3 px-4 font-semibold text-gray-700">Username</th>
-                  <th class="text-left py-3 px-4 font-semibold text-gray-700">Created</th>
-                  <th class="text-right py-3 px-4 font-semibold text-gray-700">Actions</th>
+                  <th class="text-left py-3 px-2 sm:px-4 font-semibold text-gray-700 text-sm sm:text-base">Name</th>
+                  <th class="text-left py-3 px-2 sm:px-4 font-semibold text-gray-700 text-sm sm:text-base">Username</th>
+                  <th class="text-left py-3 px-2 sm:px-4 font-semibold text-gray-700 text-sm sm:text-base hidden md:table-cell">Created</th>
+                  <th class="text-right py-3 px-2 sm:px-4 font-semibold text-gray-700 text-sm sm:text-base">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <% @organizations.each do |org| %>
                   <tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="py-3 px-4"><%= org.name %></td>
-                    <td class="py-3 px-4 font-mono text-sm"><%= org.username %></td>
-                    <td class="py-3 px-4 text-gray-600"><%= org.created_at.strftime('%Y-%m-%d') %></td>
-                    <td class="py-3 px-4 text-right space-x-2">
+                    <td class="py-3 px-2 sm:px-4 text-sm sm:text-base"><%= org.name %></td>
+                    <td class="py-3 px-2 sm:px-4 font-mono text-xs sm:text-sm"><%= org.username %></td>
+                    <td class="py-3 px-2 sm:px-4 text-gray-600 text-sm hidden md:table-cell"><%= org.created_at.strftime('%Y-%m-%d') %></td>
+                    <td class="py-3 px-2 sm:px-4 text-right space-x-1 sm:space-x-2">
                       <a
                         href="/super-admin/organizations/<%= org.id %>/edit"
-                        class="text-orange-600 hover:text-orange-700 font-medium"
+                        class="text-orange-600 hover:text-orange-700 font-medium text-sm"
                       >
                         Edit
                       </a>
@@ -121,7 +121,7 @@
                         <button
                           type="submit"
                           onclick="return confirm('Are you sure you want to delete <%= org.name %>?')"
-                          class="text-red-600 hover:text-red-700 font-medium"
+                          class="text-red-600 hover:text-red-700 font-medium text-sm"
                         >
                           Delete
                         </button>
