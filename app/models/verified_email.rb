@@ -1,3 +1,15 @@
+# Table: verified_emails
+# ------------------------------------------------------------------------------------------------
+# Columns:
+#  id                | INTEGER      | PRIMARY KEY AUTOINCREMENT
+#  email_hash        | varchar(255) | NOT NULL
+#  organization_name | varchar(255) |
+#  created_at        | timestamp    | NOT NULL
+#  updated_at        | timestamp    | NOT NULL
+# Indexes:
+#  verified_emails_new_email_hash_organization_name_index | UNIQUE (email_hash, organization_name)
+# ------------------------------------------------------------------------------------------------
+
 require 'digest'
 require 'csv'
 

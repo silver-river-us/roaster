@@ -1,3 +1,17 @@
+# Table: organizations
+# ---------------------------------------------------------
+# Columns:
+#  id            | INTEGER      | PRIMARY KEY AUTOINCREMENT
+#  name          | varchar(255) | NOT NULL
+#  username      | varchar(255) | NOT NULL
+#  password_hash | varchar(255) | NOT NULL
+#  created_at    | timestamp    | NOT NULL
+#  updated_at    | timestamp    | NOT NULL
+# Indexes:
+#  sqlite_autoindex_organizations_1 | UNIQUE (name)
+#  sqlite_autoindex_organizations_2 | UNIQUE (username)
+# ---------------------------------------------------------
+
 require 'bcrypt'
 
 class Organization < Sequel::Model
