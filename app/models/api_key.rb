@@ -1,3 +1,18 @@
+# Table: api_keys
+# --------------------------------------------------------
+# Columns:
+#  id           | INTEGER      | PRIMARY KEY AUTOINCREMENT
+#  name         | varchar(255) | NOT NULL
+#  key_hash     | varchar(255) | NOT NULL
+#  key_prefix   | varchar(8)   | NOT NULL
+#  created_at   | timestamp    | NOT NULL
+#  updated_at   | timestamp    | NOT NULL
+#  last_used_at | timestamp    |
+# Indexes:
+#  api_keys_key_hash_index   | UNIQUE (key_hash)
+#  api_keys_key_prefix_index | (key_prefix)
+# --------------------------------------------------------
+
 require 'digest'
 require 'securerandom'
 

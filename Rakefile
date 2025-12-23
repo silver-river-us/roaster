@@ -61,4 +61,17 @@ namespace :db do
       puts '✗ Email is not verified'
     end
   end
+
+  desc 'Annotate models with schema information'
+  task :annotate do
+    require_relative 'config/database'
+    require 'sequel/annotate'
+
+    # Load all models
+    Dir['app/models/*.rb'].each { |file| require_relative file }
+
+    # Annotate all model files at the beginning
+    Sequel::Annotate.annotate(Dir['app/models/*.rb'], border: true, position: :before)
+    puts 'Models annotated successfully!'
+  end
 end
