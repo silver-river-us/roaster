@@ -14,9 +14,9 @@ gem 'sinatra'
 gem 'sqlite3'
 
 group :development, :test do
-  gem 'sequel-annotate', require: false
   gem 'rubocop', require: false
   gem 'rubocop-rake', require: false
+  gem 'sequel-annotate', require: false
 end
 
 group :test do
